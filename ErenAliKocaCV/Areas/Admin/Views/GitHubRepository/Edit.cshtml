@@ -1,0 +1,53 @@
+@model ErenAliKocaCV.Models.FeaturedRepository
+
+@{
+    ViewData["Title"] = "GitHub Repo Düzenle";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <h2 class="mt-4 mb-4">GitHub Repo Düzenle</h2>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-edit mr-1"></i>
+            @Model.Name Reposunu Düzenleniyor
+            <a asp-action="Index" class="btn btn-sm btn-secondary float-right">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="GitHubId" />
+                <input type="hidden" asp-for="Name" />
+                
+                <div class="form-group">
+                    <label asp-for="Order">Sıralama</label>
+                    <input asp-for="Order" class="form-control" />
+                    <span asp-validation-for="Order" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="CustomDescription">Özel Açıklama</label>
+                    <textarea asp-for="CustomDescription" class="form-control" rows="3" placeholder="Bu reponun GitHub açıklaması yerine özel bir açıklama eklemek isterseniz burayı doldurun."></textarea>
+                    <small class="form-text text-muted">Boş bırakırsanız, GitHub'daki açıklama kullanılacaktır.</small>
+                    <span asp-validation-for="CustomDescription" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save mr-1"></i> Kaydet
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times mr-1"></i> İptal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

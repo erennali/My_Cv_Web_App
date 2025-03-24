@@ -1,0 +1,66 @@
+@model ErenAliKocaCV.Models.Skill
+
+@{
+    ViewData["Title"] = "Edit Skill";
+}
+
+<div class="container-fluid">
+    <h1 class="mb-4">Edit Skill</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="control-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Category" class="control-label"></label>
+                            <input asp-for="Category" class="form-control" />
+                            <span asp-validation-for="Category" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Proficiency" class="control-label"></label>
+                            <input asp-for="Proficiency" class="form-control" type="range" min="0" max="100" step="1" />
+                            <output for="Proficiency" id="proficiencyValue">@Model.Proficiency</output>%
+                            <span asp-validation-for="Proficiency" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-save"></i> Save
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Update the output value when the slider value changes
+        $(document).ready(function () {
+            var slider = document.querySelector("input[type='range']");
+            var output = document.querySelector("#proficiencyValue");
+            
+            slider.oninput = function() {
+                output.textContent = this.value;
+            }
+        });
+    </script>
+} 

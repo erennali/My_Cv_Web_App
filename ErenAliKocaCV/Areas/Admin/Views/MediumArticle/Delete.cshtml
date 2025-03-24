@@ -1,0 +1,56 @@
+@model ErenAliKocaCV.Models.MediumArticle
+
+@{
+    ViewData["Title"] = "Medium Yazısı Sil";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h2><i class="fas fa-exclamation-triangle"></i> Medium Yazısı Silme Onayı</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-circle"></i> "<strong>@Model.Title</strong>" başlıklı Medium yazısını silmek istediğinizden emin misiniz?
+                Bu işlem geri alınamaz!
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-3">Başlık</dt>
+                        <dd class="col-sm-9">@Model.Title</dd>
+                        
+                        <dt class="col-sm-3">Açıklama</dt>
+                        <dd class="col-sm-9">@Model.Description</dd>
+                        
+                        <dt class="col-sm-3">Makale URL</dt>
+                        <dd class="col-sm-9">
+                            <a href="@Model.ArticleUrl" target="_blank">@Model.ArticleUrl</a>
+                        </dd>
+                        
+                        <dt class="col-sm-3">Yayın Tarihi</dt>
+                        <dd class="col-sm-9">@Model.PublishedDate.ToString("dd MMMM yyyy")</dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+                    {
+                        <img src="@Model.CoverImageUrl" alt="@Model.Title" class="img-fluid rounded" />
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Evet, Sil
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> İptal
+                </a>
+            </form>
+        </div>
+    </div>
+</div> 

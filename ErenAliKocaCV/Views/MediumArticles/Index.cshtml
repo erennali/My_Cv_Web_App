@@ -1,0 +1,172 @@
+@model IEnumerable<ErenAliKocaCV.Models.MediumArticle>
+
+@{
+    ViewData["Title"] = "Medium Yazılarım";
+    Layout = "_Layout";
+}
+
+<section class="ftco-section" id="medium-articles-section">
+    <div class="container">
+        <div class="row justify-content-center mb-5 pb-3">
+            <div class="col-md-12 heading-section text-center">
+                <h1 class="big big-2">Medium</h1>
+                <h2 class="mb-4">Medium Yazılarım</h2>
+                <p>Teknik konularda yazdığım Medium makalelerim</p>
+                <div class="underline-bar"></div>
+            </div>
+        </div>
+        
+        <div class="row">
+            @foreach (var article in Model)
+            {
+                <div class="col-md-4 text-center d-flex ftco-animate">
+                    <a href="@article.ArticleUrl" target="_blank" class="services-1">
+                        <div class="article-image">
+                            @if (!string.IsNullOrEmpty(article.CoverImageUrl))
+                            {
+                                <img src="@article.CoverImageUrl" alt="@article.Title" class="article-icon">
+                            }
+                            else
+                            {
+                                <i class="flaticon-analysis"></i>
+                            }
+                        </div>
+                        <div class="article-title">
+                            @article.Title
+                        </div>
+                        <div class="article-divider"></div>
+                        <div class="article-description">
+                            @article.Description
+                        </div>
+                        <div class="article-date">
+                            <i class="icon-calendar"></i> @article.PublishedDate.ToString("dd MMMM yyyy")
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@section Styles {
+    <style>
+        #medium-articles-section {
+            padding: 5em 0;
+            background: #000;
+            color: #fff;
+        }
+        
+        #medium-articles-section h2, 
+        #medium-articles-section .big {
+            color: #fff !important;
+        }
+        
+        .heading-section h2 {
+            font-size: 40px;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+        
+        .underline-bar {
+            width: 80px;
+            height: 3px;
+            background: #FFBD39;
+            margin: 20px auto 30px;
+        }
+        
+        .heading-section p {
+            color: rgba(255,255,255,0.7);
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .article-card {
+            display: block;
+            background: #222;
+            border-radius: 5px;
+            overflow: hidden;
+            text-align: center;
+            padding: 30px;
+            height: 100%;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            text-decoration: none !important;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .article-image {
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .article-icon {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #FFBD39;
+            padding: 5px;
+        }
+        
+        .article-image i {
+            font-size: 60px;
+            color: #FFBD39;
+        }
+        
+        .article-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+        
+        .article-divider {
+            width: 40px;
+            height: 2px;
+            background: #FFBD39;
+            margin: 0 auto 20px;
+        }
+        
+        .article-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .article-date {
+            font-size: 12px;
+            color: #FFBD39;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+        
+        @@media (max-width: 767px) {
+            .article-card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .article-title {
+                font-size: 16px;
+            }
+            
+            .article-description {
+                font-size: 13px;
+            }
+            
+            .article-icon {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+} 

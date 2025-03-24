@@ -1,0 +1,93 @@
+@{
+    ViewData["Title"] = "About Me | My Background";
+    var personalInfo = ViewBag.PersonalInfo as ErenAliKocaCV.Models.PersonalInfo;
+    
+    // Use ViewBag.ProjectCountForAbout value if coming from homepage (as partial view)
+    // Use ViewBag.ProjectCount value if accessing /About URL directly
+    // Use 0 as default if both values are null
+    var projectCount = ViewBag.ProjectCountForAbout ?? ViewBag.ProjectCount ?? 0;
+    
+    var test = 3;
+}
+
+<div class="container">
+    <div class="page-title d-none">About Me</div>
+    <div class="row d-flex">
+        <div class="col-md-6 col-lg-5 d-flex">
+            <div class="img-about img d-flex align-items-stretch">
+                <div class="overlay"></div>
+                <div class="img d-flex align-self-stretch align-items-center" style="position: relative; overflow: hidden;">
+                    @if (!string.IsNullOrEmpty(personalInfo?.ProfileImage))
+                    {
+                        <img data-src="@personalInfo.ProfileImage" alt="@personalInfo.FullName" class="lazy-image" style="position: absolute; width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                        <noscript>
+                            <img src="@personalInfo.ProfileImage" alt="@personalInfo.FullName" style="position: absolute; width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                        </noscript>
+                    }
+                    else
+                    {
+                        <div style="background-image:url(/clark-master/images/bg_1.png); position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center;"></div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-7 pl-lg-5 pb-5">
+            <div class="row justify-content-start pb-3">
+                <div class="col-md-12 heading-section ftco-animate">
+                    <h1 class="big">About</h1>
+                    <h2 class="mb-4">About Me</h2>
+                    <p>@(personalInfo?.Bio ?? "A passionate software developer with experience in building web applications.")</p>
+                    <ul class="about-info mt-4 px-md-0 px-2">
+                        <li class="d-flex"><span>Name:</span> <span>@(personalInfo?.FullName ?? "Eren Ali Koca")</span></li>
+                        <li class="d-flex"><span>Email:</span> <span>@(personalInfo?.Email ?? "contact@erenalikoca.com")</span></li>
+                        <li class="d-flex"><span>Phone: </span> <span>@(personalInfo?.Phone ?? "+90 XXX XXX XX XX")</span></li>
+                        <li class="d-flex"><span>Address: </span> <span>@(personalInfo?.Address ?? "Turkey")</span></li>
+                        <li class="d-flex"><span>Website: </span> <span>@(personalInfo?.Website ?? "erenalikoca.com")</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="counter-wrap ftco-animate d-flex mt-md-3">
+                <div class="text">
+                    <p class="mb-4">
+                        <span class="number" id="projectCountSpan">@projectCount</span>
+                        <span>Projects completed</span>
+                    </p>
+                    <p><a asp-controller="CV" asp-action="Download" class="nav-link cv-button" target="_blank" rel="noopener"><span><i class="icon-download"></i>Download CV</span></a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get project count
+        const projectCount = @Html.Raw(projectCount);
+        const counterSpan = document.getElementById('projectCountSpan');
+        
+        // Show the correct value initially
+        counterSpan.textContent = projectCount;
+        
+        // Animation is removed as correct value is already shown
+        // If you still want animation, you can activate the line below
+        // animateCounter(counterSpan, projectCount);
+    });
+
+    function animateCounter(element, target) {
+        // Use current content value as start
+        let current = 0;
+        const increment = target / 50; // Animation speed
+        
+        const updateCounter = () => {
+            if(current < target) {
+                current += increment;
+                element.textContent = Math.ceil(current);
+                requestAnimationFrame(updateCounter);
+            } else {
+                element.textContent = target;
+            }
+        };
+        
+        updateCounter();
+    }
+</script>

@@ -1,0 +1,305 @@
+@model ErenAliKocaCV.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Portal - Register</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+        
+        .auth-wrapper {
+            width: 100%;
+            max-width: 550px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .auth-logo img {
+            max-height: 60px;
+        }
+        
+        .auth-logo h4 {
+            color: white;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        
+        .auth-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .auth-header {
+            background-color: #f8fafc;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .auth-header h4 {
+            margin: 0;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        
+        .auth-body {
+            padding: 30px;
+        }
+        
+        .auth-footer {
+            background-color: #f8fafc;
+            padding: 15px 30px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+        
+        .form-control {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 12px 16px;
+            height: auto;
+            box-shadow: none;
+            font-size: 0.95rem;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #334155;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 6px;
+            padding: 12px 20px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+        
+        .alert {
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+        
+        .text-primary:hover {
+            color: var(--secondary-color) !important;
+            text-decoration: none;
+        }
+        
+        .input-group-text {
+            background-color: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-right: none;
+        }
+        
+        .password-addon {
+            border-left: none;
+            cursor: pointer;
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .security-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 7px 15px;
+            border-radius: 30px;
+            color: #0f172a;
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .security-badge i {
+            margin-right: 6px;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="security-badge">
+            <i class="fas fa-shield-alt"></i> Secure Registration
+        </div>
+        
+        <div class="auth-logo">
+            <h4>EAK Admin Portal</h4>
+        </div>
+        
+        <div class="auth-card">
+            <div class="auth-header">
+                <h4>
+                    <i class="fas fa-user-plus me-2"></i>
+                    Create Account
+                </h4>
+            </div>
+            
+            <div class="auth-body">
+                <p class="text-muted mb-4">Please fill in the details to create an admin account.</p>
+                
+                <form asp-area="Admin" asp-controller="Account" asp-action="Register" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Username" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input asp-for="Username" class="form-control" placeholder="Enter username" />
+                            </div>
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input asp-for="Email" class="form-control" placeholder="Enter email" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input asp-for="Password" class="form-control" type="password" id="password-input" placeholder="Create password" />
+                                <span class="input-group-text password-addon" onclick="togglePassword('password-input', 'password-icon')">
+                                    <i class="far fa-eye-slash" id="password-icon"></i>
+                                </span>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input asp-for="ConfirmPassword" class="form-control" type="password" id="confirm-password-input" placeholder="Confirm password" />
+                                <span class="input-group-text password-addon" onclick="togglePassword('confirm-password-input', 'confirm-password-icon')">
+                                    <i class="far fa-eye-slash" id="confirm-password-icon"></i>
+                                </span>
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    @if (!ViewBag.FirstAdmin)
+                    {
+                        <div class="mb-3">
+                            <label asp-for="RegistrationKey" class="form-label">Registration Key</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                <input asp-for="RegistrationKey" class="form-control" placeholder="Enter registration key" />
+                            </div>
+                            <span asp-validation-for="RegistrationKey" class="text-danger"></span>
+                            <div class="form-text text-muted">Required for creating additional admin accounts.</div>
+                        </div>
+                    }
+                    
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p class="mb-0">Already have an account? <a asp-area="Admin" asp-controller="Account" asp-action="Login" class="text-primary fw-medium">Sign in</a></p>
+                </div>
+            </div>
+            
+            <div class="auth-footer">
+                <div class="d-flex justify-content-center">
+                    <i class="fas fa-shield-alt me-2"></i> 
+                    Protected by advanced security measures
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const passwordIcon = document.getElementById(iconId);
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.remove('fa-eye-slash');
+                passwordIcon.classList.add('fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.classList.remove('fa-eye');
+                passwordIcon.classList.add('fa-eye-slash');
+            }
+        }
+    </script>
+</body>
+</html> 

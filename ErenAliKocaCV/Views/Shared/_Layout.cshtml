@@ -1,35 +1,88 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <title>@ViewData["Title"] - ErenAliKocaCV</title>
+    <title>@ViewData["Title"] | Eren Ali Koca</title>
     
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" href="images/code.png" type="image/png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/code.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/code.png">
+    <link rel="shortcut icon" href="code.png" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
 
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Eren Ali Koca - Software Developer portfolio showcasing skills, projects, and experience in web development, C#, .NET, and more">
+    <meta name="keywords" content="software developer, programmer, web development, .NET developer, C#, software engineer, Eren Ali Koca">
+    <meta name="author" content="Eren Ali Koca">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="@ViewData["Title"] | Eren Ali Koca">
+    <meta property="og:description" content="Software Developer portfolio showcasing skills, projects, and experience in web development">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://erenalikoca.com">
+    <meta property="og:image" content="~/images/og-image.png">
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@ViewData["Title"] | Eren Ali Koca">
+    <meta name="twitter:description" content="Software Developer portfolio showcasing skills, projects, and experience in web development">
+    <meta name="twitter:image" content="~/images/og-image.png">
+    
+    <!-- Preconnect to external resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+
+    <!-- Critical CSS for above-the-fold content -->
+    <style>
+        /* Add critical CSS for faster initial rendering */
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            line-height: 1.8; 
+            font-size: 16px; 
+            background: #fff; 
+            color: #999999; 
+        }
+        .navbar { background: rgba(0, 0, 0, 0.7); }
+        @@media (max-width: 767.98px) {
+            .navbar-collapse { background: rgba(0, 0, 0, 0.9); }
+        }
+    </style>
+    
+    <!-- Non-critical CSS loaded asynchronously -->
     <link rel="stylesheet" href="~/clark-master/css/open-iconic-bootstrap.min.css">
     <link rel="stylesheet" href="~/clark-master/css/animate.css">
-    
     <link rel="stylesheet" href="~/clark-master/css/owl.carousel.min.css">
     <link rel="stylesheet" href="~/clark-master/css/owl.theme.default.min.css">
     <link rel="stylesheet" href="~/clark-master/css/magnific-popup.css">
-
     <link rel="stylesheet" href="~/clark-master/css/aos.css">
-
     <link rel="stylesheet" href="~/clark-master/css/ionicons.min.css">
-    
     <link rel="stylesheet" href="~/clark-master/css/flaticon.css">
     <link rel="stylesheet" href="~/clark-master/css/icomoon.css">
     <link rel="stylesheet" href="~/clark-master/css/style.css">
     
+    <!-- FontAwesome (defer loading) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"></noscript>
+    
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/ErenAliKocaCV.styles.css" asp-append-version="true"/>
+    
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
     
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar ftco-navbar-light site-navbar-target" id="ftco-navbar">
-        <div class="container">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ErenAliKocaCV</a>
+        <div class="container-fluid px-md-5">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="~/images/dev-icon.svg" alt="Eren Ali Koca Logo" class="logo-img" width="30" height="30">
+                Eren Ali Koca
+            </a>
             <button class="navbar-toggler js-fh5co-nav-toggle fh5co-nav-toggle" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="oi oi-menu"></span> Menu
             </button>
@@ -37,12 +90,14 @@
             <div class="collapse navbar-collapse" id="ftco-nav">
                 <ul class="navbar-nav nav ml-auto">
                     <li class="nav-item"><a href="#home-section" class="nav-link"><span>Home</span></a></li>
-                    <li class="nav-item"><a href="#about-section" class="nav-link"><span>About</span></a></li>
-                    <li class="nav-item"><a href="#resume-section" class="nav-link"><span>Resume</span></a></li>
-                    <li class="nav-item"><a href="#services-section" class="nav-link"><span>Services</span></a></li>
-                    <li class="nav-item"><a href="#skills-section" class="nav-link"><span>Skills</span></a></li>
-                    <li class="nav-item"><a href="#projects-section" class="nav-link"><span>Projects</span></a></li>
-                    <li class="nav-item"><a href="#contact-section" class="nav-link"><span>Contact</span></a></li>
+                    <li class="nav-item"><a href="#about" class="nav-link"><span>About</span></a></li>
+                    <li class="nav-item"><a href="#github-section" class="nav-link"><span>GitHub</span></a></li>
+                    <li class="nav-item"><a href="#services" class="nav-link"><span>Services</span></a></li>
+                    <li class="nav-item"><a href="#skills" class="nav-link"><span>Skills</span></a></li>
+                    <li class="nav-item"><a href="#projects" class="nav-link"><span>Projects</span></a></li>
+                    <li class="nav-item"><a href="#medium-articles-section" class="nav-link"><span>My Medium Articles</span></a></li>
+                    <li class="nav-item"><a href="#contact" class="nav-link"><span>Contact</span></a></li>
+                    <li class="nav-item"><a asp-controller="CV" asp-action="Download" class="nav-link cv-button" target="_blank" rel="noopener"><span><i class="icon-download"></i> CV</span></a></li>
                 </ul>
             </div>
         </div>
@@ -54,10 +109,46 @@
 
     <footer class="ftco-footer ftco-section">
         <div class="container">
+            <div class="row mb-5">
+                <div class="col-md-4">
+                    <div class="ftco-footer-widget mb-4">
+                        <h2 class="ftco-heading-2">About Me</h2>
+                        <p>Passionate software developer with expertise in creating efficient, scalable, and user-friendly applications across various platforms and technologies.</p>
+                        <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-3">
+                            <li class="ftco-animate"><a href="https://github.com/erennali" target="_blank" rel="noopener"><span class="icon-github"></span></a></li>
+                            <li class="ftco-animate"><a href="https://www.linkedin.com/in/erenalikoca/" target="_blank" rel="noopener"><span class="icon-linkedin"></span></a></li>
+                            <li class="ftco-animate"><a href="https://medium.com/@@erenali" target="_blank" rel="noopener"><span class="icon-medium"></span></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ftco-footer-widget mb-4 ml-md-4">
+                        <h2 class="ftco-heading-2">Site Links</h2>
+                        <ul class="list-unstyled">
+                            <li><a href="#home-section"><span class="icon-long-arrow-right mr-2"></span>Home</a></li>
+                            <li><a href="#about"><span class="icon-long-arrow-right mr-2"></span>About</a></li>
+                            <li><a href="#github-section"><span class="icon-long-arrow-right mr-2"></span>GitHub</a></li>
+                            <li><a href="#projects"><span class="icon-long-arrow-right mr-2"></span>Projects</a></li>
+                            <li><a href="#contact"><span class="icon-long-arrow-right mr-2"></span>Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ftco-footer-widget mb-4">
+                        <h2 class="ftco-heading-2">Have a Question?</h2>
+                        <div class="block-23 mb-3">
+                            <ul>
+                                <li><a href="mailto:eren_ali_koca@hotmail.com"><span class="icon icon-envelope"></span><span class="text">eren_ali_koca@hotmail.com</span></a></li>
+                                <li><a href="#contact"><span class="icon icon-message"></span><span class="text">Send a Message</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-12 text-center">
-                    <p>
-                        &copy; @DateTime.Now.Year - ErenAliKocaCV
+                    <p class="copyright">
+                        &copy; @DateTime.Now.Year - Eren Ali Koca | All Rights Reserved | Designed with <i class="icon-heart color-danger" aria-hidden="true"></i>
                     </p>
                 </div>
             </div>
@@ -67,21 +158,44 @@
     <!-- loader -->
     <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
 
+    <!-- Core JS files loaded first -->
     <script src="~/clark-master/js/jquery.min.js"></script>
-    <script src="~/clark-master/js/jquery-migrate-3.0.1.min.js"></script>
     <script src="~/clark-master/js/popper.min.js"></script>
     <script src="~/clark-master/js/bootstrap.min.js"></script>
-    <script src="~/clark-master/js/jquery.easing.1.3.js"></script>
-    <script src="~/clark-master/js/jquery.waypoints.min.js"></script>
-    <script src="~/clark-master/js/jquery.stellar.min.js"></script>
-    <script src="~/clark-master/js/owl.carousel.min.js"></script>
-    <script src="~/clark-master/js/jquery.magnific-popup.min.js"></script>
-    <script src="~/clark-master/js/aos.js"></script>
-    <script src="~/clark-master/js/jquery.animateNumber.min.js"></script>
-    <script src="~/clark-master/js/scrollax.min.js"></script>
-    <script src="~/clark-master/js/main.js"></script>
     
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- Defer non-critical scripts -->
+    <script defer src="~/clark-master/js/jquery-migrate-3.0.1.min.js"></script>
+    <script defer src="~/clark-master/js/jquery.easing.1.3.js"></script>
+    <script defer src="~/clark-master/js/jquery.waypoints.min.js"></script>
+    <script defer src="~/clark-master/js/jquery.stellar.min.js"></script>
+    <script defer src="~/clark-master/js/owl.carousel.min.js"></script>
+    <script defer src="~/clark-master/js/jquery.magnific-popup.min.js"></script>
+    <script defer src="~/clark-master/js/aos.js"></script>
+    <script defer src="~/clark-master/js/jquery.animateNumber.min.js"></script>
+    <script defer src="~/clark-master/js/scrollax.min.js"></script>
+    <script defer src="~/clark-master/js/main.js"></script>
+    
+    <script defer src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    
+    <!-- Structured data for better SEO -->
+    <script type="application/ld+json">
+    {
+        "@@context": "http://schema.org",
+        "@@type": "Person",
+        "name": "Eren Ali Koca",
+        "url": "https://erenalikoca.com",
+        "sameAs": [
+            "https://github.com/erennali",
+            "https://www.linkedin.com/in/erenalikoca/",
+            "https://medium.com/@@erenali"
+        ],
+        "jobTitle": "Software Developer",
+        "worksFor": {
+            "@@type": "Organization",
+            "name": "Independent Developer"
+        }
+    }
+    </script>
 </body>
 </html>

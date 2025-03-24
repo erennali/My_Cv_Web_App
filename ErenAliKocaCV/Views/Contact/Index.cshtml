@@ -1,0 +1,124 @@
+@model ErenAliKocaCV.Models.ContactMessage
+@{
+    ViewData["Title"] = "Contact Me | Get In Touch";
+    var personalInfo = ViewBag.PersonalInfo as ErenAliKocaCV.Models.PersonalInfo;
+}
+
+<section class="ftco-section contact-section ftco-no-pb" id="contact-section">
+    <div class="container">
+        <div class="page-title d-none">Contact Me</div>
+        <div class="row justify-content-center mb-5 pb-3">
+            <div class="col-md-7 heading-section text-center ftco-animate">
+                <h1 class="big big-2">Contact</h1>
+                <h2 class="mb-4">Contact Me</h2>
+                <p>Feel free to get in touch with me</p>
+            </div>
+        </div>
+
+        <div class="row d-flex contact-info mb-5">
+            <div class="col-md-6 col-lg-3 d-flex ftco-animate">
+                <div class="align-self-stretch box p-4 text-center">
+                    <div class="icon d-flex align-items-center justify-content-center">
+                        <span class="icon-map-signs"></span>
+                    </div>
+                    <h3 class="mb-4">Address</h3>
+                    <p>@(ViewBag.PersonalInfo?.Address ?? "Turkey")</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 d-flex ftco-animate">
+                <div class="align-self-stretch box p-4 text-center">
+                    <div class="icon d-flex align-items-center justify-content-center">
+                        <span class="icon-phone2"></span>
+                    </div>
+                    <h3 class="mb-4">Contact Number</h3>
+                    <p><a href="tel://@(ViewBag.PersonalInfo?.Phone ?? "+90 XXX XXX XX XX")">@(ViewBag.PersonalInfo?.Phone ?? "+90 XXX XXX XX XX")</a></p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 d-flex ftco-animate">
+                <div class="align-self-stretch box p-4 text-center">
+                    <div class="icon d-flex align-items-center justify-content-center">
+                        <span class="icon-paper-plane"></span>
+                    </div>
+                    <h3 class="mb-4">Email Address</h3>
+                    <p><a href="mailto:@(ViewBag.PersonalInfo?.Email ?? "contact@erenalikoca.com")">@(ViewBag.PersonalInfo?.Email ?? "contact@erenalikoca.com")</a></p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 d-flex ftco-animate">
+                <div class="align-self-stretch box p-4 text-center">
+                    <div class="icon d-flex align-items-center justify-content-center">
+                        <span class="icon-github"></span>
+                    </div>
+                    <h3 class="mb-4">GitHub</h3>
+                    <p><a href="https://github.com/erennali" target="_blank">erennali</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row no-gutters block-9">
+            <div class="col-md-6 order-md-last d-flex">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success w-100 text-center p-5 shadow-sm" data-aos="zoom-in">
+                        <i class="icon-check-circle mr-2" style="font-size: 24px;"></i>
+                        <h4 class="alert-heading">Message Sent!</h4>
+                        <p class="mb-0">@TempData["SuccessMessage"]</p>
+                    </div>
+                }
+                else
+                {
+                    <form asp-controller="Contact" asp-action="SubmitMessage" method="post" class="dark-form contact-form w-100 shadow rounded" data-aos="fade-left">
+                        <h4 class="mb-4 text-center">Send Me a Message</h4>
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="form-group position-relative">
+                            <label for="Name" class="form-label">Your Name</label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter your name">
+                            <span asp-validation-for="Name" class="validation-message"></span>
+                        </div>
+                        
+                        <div class="form-group position-relative">
+                            <label for="Email" class="form-label">Your Email</label>
+                            <input asp-for="Email" class="form-control" placeholder="Enter your email">
+                            <span asp-validation-for="Email" class="validation-message"></span>
+                        </div>
+                        
+                        <div class="form-group position-relative">
+                            <label for="Subject" class="form-label">Subject</label>
+                            <input asp-for="Subject" class="form-control" placeholder="What is this regarding?">
+                            <span asp-validation-for="Subject" class="validation-message"></span>
+                        </div>
+                        
+                        <div class="form-group position-relative">
+                            <label for="Message" class="form-label">Message</label>
+                            <textarea asp-for="Message" cols="30" rows="7" class="form-control" placeholder="Your message here..."></textarea>
+                            <span asp-validation-for="Message" class="validation-message"></span>
+                        </div>
+                        
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn dark-submit-btn">
+                                <i class="icon-paper-plane mr-2"></i> Send Message
+                            </button>
+                        </div>
+                    </form>
+                }
+            </div>
+
+            <div class="col-md-6 d-flex">
+                <div class="img" style="position: relative; overflow: hidden;">
+                    @if (!string.IsNullOrEmpty(personalInfo?.ProfileImage))
+                    {
+                        <img src="@personalInfo.ProfileImage" alt="@personalInfo.FullName" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                    }
+                    else
+                    {
+                        <div style="background-image: url(/clark-master/images/about.jpg); width: 100%; height: 100%; background-size: cover; background-position: center;"></div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

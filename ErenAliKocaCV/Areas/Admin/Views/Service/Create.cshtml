@@ -1,0 +1,178 @@
+@model ErenAliKocaCV.Models.Service
+
+@{
+    ViewData["Title"] = "Add Service";
+    // Sadece CSS'de tanımlı gerçek flaticon sınıfları
+    var flatIcons = new[] {
+        "flaticon-ideas",
+        "flaticon-flasks", 
+        "flaticon-analysis",
+        "flaticon-ux-design", 
+        "flaticon-web-design", 
+        "flaticon-idea", 
+        "flaticon-innovation"
+    };
+    
+    // Yazılım ve teknoloji ile ilgili FontAwesome ikonları
+    var fontAwesomeIcons = new[] {
+        "fas fa-code", "fas fa-laptop-code", "fas fa-terminal",
+        "fas fa-database", "fas fa-server", "fas fa-cloud",
+        "fas fa-laptop", "fas fa-desktop", "fas fa-mobile-alt",
+        "fas fa-cogs", "fas fa-wrench", "fas fa-bug",
+        "fas fa-shield-alt", "fas fa-lock", "fas fa-chart-line",
+        "fas fa-project-diagram", "fas fa-network-wired", "fas fa-microchip",
+        "fas fa-wifi", "fas fa-sitemap", "fas fa-robot",
+        "fas fa-brain", "fas fa-file-code", "fas fa-dev",
+        "fab fa-html5", "fab fa-css3-alt", "fab fa-js-square",
+        "fab fa-react", "fab fa-angular", "fab fa-vuejs",
+        "fab fa-node-js", "fab fa-php", "fab fa-java",
+        "fab fa-python", "fab fa-swift", "fab fa-android",
+        "fab fa-apple", "fab fa-windows", "fab fa-linux",
+        "fab fa-docker", "fab fa-aws", "fab fa-github"
+    };
+}
+
+<div class="container-fluid">
+    <h1 class="mb-4">Add Service</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-controller="Service" asp-area="Admin" asp-action="Create" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="control-label">Title</label>
+                            <input asp-for="Title" class="form-control" required />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        
+                        <ul class="nav nav-tabs mb-3" id="iconTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="flaticon-tab" data-bs-toggle="tab" data-bs-target="#flaticon-content" type="button" role="tab">Flaticon</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="fontawesome-tab" data-bs-toggle="tab" data-bs-target="#fontawesome-content" type="button" role="tab">FontAwesome (Yazılım)</button>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content mb-4" id="iconTabsContent">
+                            <div class="tab-pane fade show active" id="flaticon-content" role="tabpanel">
+                                <div class="form-group">
+                                    <label asp-for="IconName" class="control-label">Flaticon Name</label>
+                                    <input asp-for="IconName" class="form-control" placeholder="e.g. flaticon-analysis" />
+                                    <span asp-validation-for="IconName" class="text-danger"></span>
+                                    <small class="form-text text-muted">Enter Flaticon name</small>
+                                    
+                                    <!-- İkon galerisi - Yalnızca tanımlı olan flaticon'lar -->
+                                    <div class="mt-3">
+                                        <p>Mevcut ikonlar (seçmek için tıklayın):</p>
+                                        <div class="d-flex flex-wrap gap-3" style="padding: 15px; border-radius: 5px; border: 1px solid #eee;">
+                                            @foreach (var icon in flatIcons)
+                                            {
+                                                <div class="icon-preview text-center p-3 border rounded" 
+                                                    style="cursor: pointer; min-width: 100px; transition: all 0.2s ease; background-color: #f9f9f9;"
+                                                    onclick="selectFlaticon('@icon')"
+                                                    onmouseover="this.style.backgroundColor='#f0f0f0'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.1)';"
+                                                    onmouseout="this.style.backgroundColor='#f9f9f9'; this.style.boxShadow='none';"
+                                                    title="@icon">
+                                                    <i class="@icon" style="font-size: 30px; color: #333; display: block; margin-bottom: 10px;"></i>
+                                                    <div class="small mt-1 text-truncate" style="max-width: 90px; font-weight: 500;">
+                                                        @icon.Replace("flaticon-", "")
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="fontawesome-content" role="tabpanel">
+                                <div class="form-group">
+                                    <label asp-for="IconClass" class="control-label">FontAwesome Icon Class</label>
+                                    <input asp-for="IconClass" class="form-control" placeholder="e.g. fas fa-code" />
+                                    <span asp-validation-for="IconClass" class="text-danger"></span>
+                                    <small class="form-text text-muted">Enter Font Awesome icon class</small>
+                                    
+                                    <!-- FontAwesome İkon Galerisi -->
+                                    <div class="mt-3">
+                                        <p>Yazılım & Teknoloji İkonları (seçmek için tıklayın):</p>
+                                        <div class="d-flex flex-wrap gap-2" style="padding: 15px; border-radius: 5px; border: 1px solid #eee; max-height: 350px; overflow-y: auto;">
+                                            @foreach (var icon in fontAwesomeIcons)
+                                            {
+                                                <div class="icon-preview text-center p-2 border rounded" 
+                                                    style="cursor: pointer; min-width: 85px; transition: all 0.2s ease; background-color: #f9f9f9;"
+                                                    onclick="selectFontAwesome('@icon')"
+                                                    onmouseover="this.style.backgroundColor='#f0f0f0'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.1)';"
+                                                    onmouseout="this.style.backgroundColor='#f9f9f9'; this.style.boxShadow='none';"
+                                                    title="@icon">
+                                                    <i class="@icon" style="font-size: 24px; color: #333; display: block; margin-bottom: 8px;"></i>
+                                                    <div class="small mt-1 text-truncate" style="max-width: 75px; font-weight: 500;">
+                                                        @icon.Replace("fas fa-", "").Replace("fab fa-", "")
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Order" class="control-label">Display Order</label>
+                            <input asp-for="Order" class="form-control" type="number" value="0" />
+                            <span asp-validation-for="Order" class="text-danger"></span>
+                            <small class="form-text text-muted">Lower numbers will be displayed first</small>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="control-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-save"></i> Create
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Function to select an flaticon and populate the input field
+        function selectFlaticon(iconName) {
+            document.getElementById('@Html.IdFor(m => m.IconName)').value = iconName;
+            document.getElementById('@Html.IdFor(m => m.IconClass)').value = '';
+            // Activate flaticon tab
+            document.getElementById('flaticon-tab').click();
+        }
+        
+        // Function to select an FontAwesome icon and populate the input field
+        function selectFontAwesome(iconClass) {
+            document.getElementById('@Html.IdFor(m => m.IconClass)').value = iconClass;
+            document.getElementById('@Html.IdFor(m => m.IconName)').value = '';
+            // Activate FontAwesome tab
+            document.getElementById('fontawesome-tab').click();
+        }
+        
+        // Make sure the form is properly submitted
+        $(document).ready(function() {
+            $('form').submit(function() {
+                console.log('Form submitted');
+                return true;
+            });
+        });
+    </script>
+} 

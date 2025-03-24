@@ -1,0 +1,54 @@
+@model ErenAliKocaCV.Models.Experience
+
+@{
+    ViewData["Title"] = "Experience Details";
+}
+
+<div class="container-fluid">
+    <h1 class="mb-4">Experience Details</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">@Model.Company - @Model.Position</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Company:</dt>
+                        <dd class="col-sm-9">@Model.Company</dd>
+                        
+                        <dt class="col-sm-3">Position:</dt>
+                        <dd class="col-sm-9">@Model.Position</dd>
+                        
+                        <dt class="col-sm-3">Period:</dt>
+                        <dd class="col-sm-9">
+                            @Model.StartDate.ToString("MMM yyyy") - 
+                            @(Model.EndDate.HasValue ? Model.EndDate.Value.ToString("MMM yyyy") : "Present")
+                        </dd>
+                        
+                        <dt class="col-sm-3">Description:</dt>
+                        <dd class="col-sm-9">
+                            @if (!string.IsNullOrEmpty(Model.Description))
+                            {
+                                <p>@Model.Description</p>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No description available</p>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

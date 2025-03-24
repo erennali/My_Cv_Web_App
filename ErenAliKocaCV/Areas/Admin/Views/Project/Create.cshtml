@@ -1,0 +1,88 @@
+@model ErenAliKocaCV.Models.Project
+
+@{
+    ViewData["Title"] = "Add Project";
+}
+
+<div class="container-fluid">
+    <h1 class="mb-4">Add Project</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="Create" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="control-label">Title</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Category" class="control-label">Category</label>
+                            <input asp-for="Category" class="form-control" />
+                            <span asp-validation-for="Category" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Client" class="control-label">Client</label>
+                            <input asp-for="Client" class="form-control" />
+                            <span asp-validation-for="Client" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="CompletionDate" class="control-label">Completion Date (leave empty if in progress)</label>
+                            <input asp-for="CompletionDate" type="date" class="form-control" />
+                            <span asp-validation-for="CompletionDate" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label class="control-label">Project Image</label>
+                            <div class="custom-file">
+                                <input type="file" name="imageFile" id="imageFile" class="form-control" accept="image/*" />
+                            </div>
+                            <small class="form-text text-muted">Upload an image for the project. Recommended size: 800x600px.</small>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="control-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-save"></i> Create
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Resim önizleme fonksiyonu
+        $(document).ready(function() {
+            $('#imageFile').change(function() {
+                var fileInput = this;
+                if (fileInput.files && fileInput.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('<div class="mt-2"><img src="' + e.target.result + '" class="img-thumbnail" style="max-height: 200px;"></div>')
+                            .insertAfter($(fileInput).parent());
+                    }
+                    reader.readAsDataURL(fileInput.files[0]);
+                }
+            });
+        });
+    </script>
+} 

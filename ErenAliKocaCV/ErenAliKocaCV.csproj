@@ -6,4 +6,22 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Octokit" Version="10.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\Education\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\Education\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\Education\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\Education\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\Education\Index.cshtml" />
+    </ItemGroup>
+
 </Project>

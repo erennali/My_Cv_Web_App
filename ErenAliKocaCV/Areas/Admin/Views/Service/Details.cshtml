@@ -1,0 +1,60 @@
+@model ErenAliKocaCV.Models.Service
+
+@{
+    ViewData["Title"] = "Service Details";
+}
+
+<div class="container-fluid">
+    <h1 class="mb-4">Service Details</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">@Model.Title</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Title:</dt>
+                        <dd class="col-sm-9">@Model.Title</dd>
+                        
+                        <dt class="col-sm-3">Icon:</dt>
+                        <dd class="col-sm-9">
+                            @if (!string.IsNullOrEmpty(Model.IconClass))
+                            {
+                                <i class="@Model.IconClass fa-2x me-2"></i> @Model.IconClass
+                            }
+                            else
+                            {
+                                <span class="text-muted">No icon</span>
+                            }
+                        </dd>
+                        
+                        <dt class="col-sm-3">Order:</dt>
+                        <dd class="col-sm-9">@Model.Order</dd>
+                        
+                        <dt class="col-sm-3">Description:</dt>
+                        <dd class="col-sm-9">
+                            @if (!string.IsNullOrEmpty(Model.Description))
+                            {
+                                <p>@Model.Description</p>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No description available</p>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

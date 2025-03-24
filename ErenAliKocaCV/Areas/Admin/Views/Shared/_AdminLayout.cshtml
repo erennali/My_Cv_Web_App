@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EAK Admin Portal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --sidebar-width: 250px;
+            --header-height: 60px;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7fb;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        .admin-wrapper {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #1e3a8a 0%, #172554 100%);
+            color: #fff;
+            position: fixed;
+            overflow-y: auto;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+        
+        .sidebar-brand {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-menu {
+            padding: 0;
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-left: 4px solid #ffffff;
+        }
+        
+        .sidebar-menu i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            transition: all 0.3s;
+        }
+        
+        .topbar {
+            height: var(--header-height);
+            background-color: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+        
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .menu-toggle {
+            margin-right: 15px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        .page-title {
+            font-weight: 600;
+            color: #374151;
+            margin: 0;
+        }
+        
+        .topbar-right {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .user-menu .dropdown-toggle {
+            background: none;
+            border: none;
+            color: #374151;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: #6b7280;
+            font-weight: 600;
+        }
+        
+        .dropdown-menu {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            padding: 8px 0;
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+        }
+        
+        .dropdown-item i {
+            margin-right: 8px;
+            width: 16px;
+        }
+        
+        .content-container {
+            padding: 20px;
+            min-height: calc(100vh - var(--header-height) - 60px);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 15px;
+            color: #6b7280;
+            border-top: 1px solid #e5e7eb;
+            margin-top: auto;
+        }
+        
+        /* Cards & Elements */
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+        
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        @@media (max-width: 768px) {
+            .sidebar {
+                margin-left: -250px;
+            }
+            
+            .sidebar.active {
+                margin-left: 0;
+            }
+            
+            .main-content {
+                width: 100%;
+                margin-left: 0;
+            }
+            
+            .main-content.active {
+                margin-left: var(--sidebar-width);
+                width: calc(100% - var(--sidebar-width));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-brand">
+                <h5 class="mb-0">EAK Admin Portal</h5>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Dashboard" ? "active" : "")">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="PersonalInfo" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "PersonalInfo" ? "active" : "")">
+                        <i class="fas fa-user"></i> Personal Info
+                    </a>
+                </li>
+                
+                <li>
+                    <a asp-area="Admin" asp-controller="Experience" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Experience" ? "active" : "")">
+                        <i class="fas fa-briefcase"></i> Experience
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Skill" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Skill" ? "active" : "")">
+                        <i class="fas fa-code"></i> Skills
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Project" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Project" ? "active" : "")">
+                        <i class="fas fa-project-diagram"></i> Projects
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="GitHubRepository" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "GitHubRepository" ? "active" : "")">
+                        <i class="fab fa-github"></i> GitHub Repositories
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Service" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Service" ? "active" : "")">
+                        <i class="fas fa-cogs"></i> Services
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="MediumArticle" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "MediumArticle" ? "active" : "")">
+                        <i class="fab fa-medium"></i> Medium Articles
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Contact" asp-action="Messages" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Contact" ? "active" : "")">
+                        <i class="fas fa-envelope"></i> Messages
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="CV" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "CV" ? "active" : "")">
+                        <i class="fas fa-file-alt"></i> CV Management
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Settings" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"].ToString() == "Settings" ? "active" : "")">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div id="main-content" class="main-content">
+            <!-- Topbar -->
+            <div class="topbar">
+                <div class="topbar-left">
+                    <div class="menu-toggle" id="menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                    <h4 class="page-title">@ViewData["Title"]</h4>
+                </div>
+                <div class="topbar-right">
+                    <div class="dropdown user-menu">
+                        <button class="dropdown-toggle" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span>@User.Identity?.Name</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown">
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-globe"></i> View Site</a></li>
+                            <li><a class="dropdown-item" asp-area="Admin" asp-controller="Account" asp-action="ChangePassword"><i class="fas fa-key"></i> Change Password</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form asp-area="Admin" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
+                                    @Html.AntiForgeryToken()
+                                    <a href="javascript:void(0)" class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </a>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="content-container">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                
+                @RenderBody()
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div>&copy; @DateTime.Now.Year - Eren Ali Koca CV Admin Portal</div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Toggle sidebar
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('main-content').classList.toggle('active');
+        });
+        
+        // Highlight active menu item based on current URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const menuItems = document.querySelectorAll('.sidebar-menu a');
+            
+            menuItems.forEach(item => {
+                if (currentPath === item.getAttribute('href')) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html> 

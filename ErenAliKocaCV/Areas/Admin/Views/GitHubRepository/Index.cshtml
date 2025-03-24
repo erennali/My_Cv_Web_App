@@ -1,0 +1,98 @@
+@model IEnumerable<ErenAliKocaCV.Models.FeaturedRepository>
+
+@{
+    ViewData["Title"] = "GitHub Repoları Yönetimi";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <h2 class="mt-4 mb-4">GitHub Repoları Yönetimi</h2>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-github mr-1"></i>
+            Seçili GitHub Repoları
+            <a asp-action="SelectRepositories" class="btn btn-sm btn-primary float-right">
+                <i class="fas fa-plus-circle"></i> Repo Ekle
+            </a>
+        </div>
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info">
+                    Henüz seçili repo bulunmuyor. Yeni bir repo eklemek için "Repo Ekle" butonuna tıklayın.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="featuredRepositoriesTable">
+                        <thead>
+                            <tr>
+                                <th>Sıra</th>
+                                <th>GitHub ID</th>
+                                <th>Repo Adı</th>
+                                <th>Özel Açıklama</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var repo in Model.OrderBy(r => r.Order))
+                            {
+                                <tr>
+                                    <td>@repo.Order</td>
+                                    <td>@repo.GitHubId</td>
+                                    <td>@repo.Name</td>
+                                    <td>@(string.IsNullOrEmpty(repo.CustomDescription) ? "-" : repo.CustomDescription)</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Edit" asp-route-id="@repo.Id" class="btn btn-sm btn-info">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form asp-action="RemoveFeatured" method="post" class="d-inline" onsubmit="return confirm('Bu repoyu kaldırmak istediğinize emin misiniz?');">
+                                                <input type="hidden" name="id" value="@repo.Id" />
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                            <div class="dropdown d-inline">
+                                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="orderDropdown_@repo.Id" data-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fas fa-sort"></i>
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="orderDropdown_@repo.Id">
+                                                    @for (int i = 1; i <= Model.Count(); i++)
+                                                    {
+                                                        <form asp-action="UpdateOrder" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@repo.Id" />
+                                                            <input type="hidden" name="newOrder" value="@i" />
+                                                            <button type="submit" class="dropdown-item @(repo.Order == i ? "active" : "")">
+                                                                @i
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#featuredRepositoriesTable').DataTable({
+                order: [[0, 'asc']],
+                columnDefs: [
+                    { orderable: false, targets: 4 }
+                ]
+            });
+        });
+    </script>
+} 

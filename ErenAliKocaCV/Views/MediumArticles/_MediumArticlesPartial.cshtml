@@ -1,0 +1,48 @@
+@{
+    var mediumArticles = ViewBag.MediumArticles as IEnumerable<ErenAliKocaCV.Models.MediumArticle>;
+}
+
+<div class="container">
+    <div class="page-title d-none">My Medium Articles</div>
+    <div class="row justify-content-center py-3">
+        <div class="col-md-12 heading-section text-center ftco-animate">
+            <h1 class="big big-2">Medium Articles</h1>
+            <h2 class="mb-4">Medium Articles</h2>
+            <p>Technical articles I've written on Medium</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        @if (mediumArticles != null && mediumArticles.Any())
+        {
+            foreach (var article in mediumArticles)
+            {
+                <div class="col-md-4 text-center d-flex ftco-animate">
+                    <a href="@article.ArticleUrl" target="_blank" class="services-1">
+                        <span class="icon">
+                            <i class="flaticon-ideas"></i>
+                        </span>
+                        <div class="desc">
+                            <h3 class="mb-5">@article.Title</h3>
+                            <p>@article.Description</p>
+                            <small class="text-muted">@article.PublishedDate.ToString("dd MMMM yyyy")</small>
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-md-4 text-center d-flex ftco-animate">
+                <a href="#" class="services-1">
+                    <span class="icon">
+                        <i class="flaticon-ideas"></i>
+                    </span>
+                    <div class="desc">
+                        <h3 class="mb-5">No Articles Found</h3>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div> 

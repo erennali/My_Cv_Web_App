@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background square -->
+  <rect width="64" height="64" rx="12" fill="#000000"/>
+  
+  <!-- Code symbols -->
+  <g stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Left bracket -->
+    <path d="M22,15 L12,32 L22,49"/>
+    
+    <!-- Right bracket -->
+    <path d="M42,15 L52,32 L42,49"/>
+    
+    <!-- Slash symbol -->
+    <path d="M33,15 L28,49"/>
+  </g>
+</svg> 

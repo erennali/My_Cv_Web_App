@@ -1,0 +1,88 @@
+@model IEnumerable<ErenAliKocaCV.Models.GitHubRepository>
+
+@{
+    ViewData["Title"] = "GitHub Repo Seçimi";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <h2 class="mt-4 mb-4">GitHub Repo Seçimi</h2>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-github mr-1"></i>
+            Tüm GitHub Repolarınız
+            <a asp-action="Index" class="btn btn-sm btn-secondary float-right">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+        </div>
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-warning">
+                    GitHub hesabınızda görüntülenecek repo bulunamadı. Lütfen GitHub API bağlantınızı kontrol edin.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="repositoriesTable">
+                        <thead>
+                            <tr>
+                                <th>Repo Adı</th>
+                                <th>Açıklama</th>
+                                <th>Dil</th>
+                                <th>Yıldız</th>
+                                <th>Fork</th>
+                                <th>Güncelleme Tarihi</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var repo in Model.OrderByDescending(r => r.UpdatedAt))
+                            {
+                                <tr>
+                                    <td><a href="@repo.HtmlUrl" target="_blank">@repo.Name</a></td>
+                                    <td>@(string.IsNullOrEmpty(repo.Description) ? "-" : repo.Description)</td>
+                                    <td>@(string.IsNullOrEmpty(repo.Language) ? "-" : repo.Language)</td>
+                                    <td>@repo.StarsCount</td>
+                                    <td>@repo.ForksCount</td>
+                                    <td>@repo.UpdatedAt.ToString("dd.MM.yyyy")</td>
+                                    <td>
+                                        @if (repo.IsFeatured)
+                                        {
+                                            <span class="badge badge-success">Seçildi</span>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="AddFeatured" method="post" class="d-inline">
+                                                <input type="hidden" name="githubId" value="@repo.Id" />
+                                                <input type="hidden" name="name" value="@repo.Name" />
+                                                <button type="submit" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-plus-circle"></i> Ekle
+                                                </button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#repositoriesTable').DataTable({
+                order: [[5, 'desc']], // Güncelleme tarihine göre sırala
+                columnDefs: [
+                    { orderable: false, targets: 6 } // İşlemler kolonu sıralanabilir değil
+                ]
+            });
+        });
+    </script>
+} 

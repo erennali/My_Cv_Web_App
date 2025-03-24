@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Favicon Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            margin: 20px auto;
+            display: block;
+        }
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Eren Ali Koca - Favicon Generator</h1>
+    <p>Bu sayfayı kullanarak favicon.ico dosyasını indirebilirsiniz.</p>
+    
+    <canvas id="canvas" width="64" height="64"></canvas>
+    
+    <a id="download" href="#" download="favicon.ico">Favicon.ico İndir</a>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#3498db';
+            ctx.beginPath();
+            ctx.arc(32, 32, 32, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Left bracket
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            ctx.beginPath();
+            ctx.moveTo(22, 15);
+            ctx.lineTo(12, 32);
+            ctx.lineTo(22, 49);
+            ctx.stroke();
+            
+            // Right bracket
+            ctx.beginPath();
+            ctx.moveTo(42, 15);
+            ctx.lineTo(52, 32);
+            ctx.lineTo(42, 49);
+            ctx.stroke();
+            
+            // Slash
+            ctx.beginPath();
+            ctx.moveTo(35, 12);
+            ctx.lineTo(28, 52);
+            ctx.stroke();
+            
+            // Set download link
+            const downloadLink = document.getElementById('download');
+            downloadLink.href = canvas.toDataURL('image/png');
+        });
+    </script>
+</body>
+</html> 

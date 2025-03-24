@@ -1,0 +1,82 @@
+@model IEnumerable<ErenAliKocaCV.Models.GitHubRepository>
+
+@{
+    ViewData["Title"] = "GitHub Projects";
+}
+
+<section class="ftco-section" id="github-section">
+    <div class="container">
+        <div class="page-title d-none">GitHub Projects</div>
+        <div class="row justify-content-center py-3">
+            <div class="col-md-12 heading-section text-center ftco-animate">
+                <h1 class="big big-2">GitHub</h1>
+                <h2 class="mb-4">GitHub Projects</h2>
+                <p>Open source projects I've developed and contributed to on GitHub</p>
+            </div>
+        </div>
+        <div class="row">
+            @if (!Model.Any())
+            {
+                <div class="col-md-12 text-center">
+                    <p>No projects to display yet.</p>
+                </div>
+            }
+            else
+            {
+                foreach (var repo in Model)
+                {
+                    <div class="col-md-4 text-center d-flex ftco-animate">
+                        <a href="@repo.HtmlUrl" target="_blank" class="services-1">
+                            <span class="icon">
+                                <i class="fas fa-code-branch"></i>
+                            </span>
+                            <div class="desc">
+                                <h3 class="mb-5" style="word-wrap: break-word; overflow-wrap: break-word; width: 100%; display: block;">@repo.Name</h3>
+                                <p>@repo.Description</p>
+                                <div class="d-flex align-items-center justify-content-center mt-3">
+                                    @if (!string.IsNullOrEmpty(repo.Language))
+                                    {
+                                        <span class="mr-3"><i class="fas fa-code mr-1"></i> @repo.Language</span>
+                                    }
+                                    <span class="mr-2"><i class="fas fa-star mr-1"></i> @repo.StarsCount</span>
+                                    <span><i class="fas fa-code-branch ml-3 mr-1"></i> @repo.ForksCount</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-12 text-center ftco-animate">
+                <a href="https://github.com/erennali" target="_blank" class="btn btn-primary py-3 px-5">
+                    <i class="fab fa-github mr-2"></i> Visit My GitHub Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Styles {
+    <style>
+        .services-1 .desc h3 {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            width: 100%;
+            hyphens: auto;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Update ScrollSpy configuration when page loads
+        $(document).ready(function() {
+            // Activate GitHub link in NavBar
+            $('nav .nav-item a[href="#github-section"]').parent().addClass('active');
+            
+            // Initialize ScrollSpy
+            $('body').scrollspy('refresh');
+        });
+    </script>
+} 
