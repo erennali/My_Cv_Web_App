@@ -63,12 +63,12 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                 if (profileImageFile != null && profileImageFile.Length > 0)
                 {
                     // Only accept image files
-                    string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+                    string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
                     var fileExtension = Path.GetExtension(profileImageFile.FileName).ToLowerInvariant();
                     
                     if (!Array.Exists(allowedExtensions, ext => ext.Equals(fileExtension)))
                     {
-                        ModelState.AddModelError("profileImageFile", "Only image files (jpg, jpeg, png, gif) are allowed.");
+                        ModelState.AddModelError("profileImageFile", "Only image files (jpg, jpeg, png, gif, webp) are allowed.");
                         return View(personalInfo);
                     }
 

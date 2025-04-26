@@ -219,9 +219,6 @@
                                         <h6 class="mb-1">@message.Name</h6>
                                         <p class="text-muted mb-0 small">@(message.Message.Length > 50 ? message.Message.Substring(0, 50) + "..." : message.Message)</p>
                                     </div>
-                                    <div class="text-muted small">
-                                        @message.CreatedAt.ToString("dd MMM")
-                                    </div>
                                 </div>
                             }
                         }
