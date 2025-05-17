@@ -1,4 +1,4 @@
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
@@ -9,12 +9,12 @@ namespace ErenAliKocaCV.Controllers
     [RedirectToHome]
     public class CVController : Controller
     {
-        private readonly ICVRepository _repository;
+        private readonly ICVFileService _cvFileService;
         private readonly IWebHostEnvironment _environment;
 
-        public CVController(ICVRepository repository, IWebHostEnvironment environment)
+        public CVController(ICVFileService cvFileService, IWebHostEnvironment environment)
         {
-            _repository = repository;
+            _cvFileService = cvFileService;
             _environment = environment;
         }
 
@@ -22,7 +22,7 @@ namespace ErenAliKocaCV.Controllers
         [RedirectToHome(false)]
         public IActionResult Download()
         {
-            var activeCV = _repository.GetActiveCVFile();
+            var activeCV = _cvFileService.GetActiveCVFile();
             if (activeCV == null)
             {
                 return NotFound("Aktif CV dosyası bulunamadı.");

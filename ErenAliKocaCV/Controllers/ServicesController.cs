@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using ErenAliKocaCV.Filters;
 
 namespace ErenAliKocaCV.Controllers
@@ -7,16 +7,16 @@ namespace ErenAliKocaCV.Controllers
     [RedirectToHome]
     public class ServicesController : Controller
     {
-        private readonly ICVRepository _repository;
+        private readonly IProfessionalService _professionalService;
 
-        public ServicesController(ICVRepository repository)
+        public ServicesController(IProfessionalService professionalService)
         {
-            _repository = repository;
+            _professionalService = professionalService;
         }
         
         public IActionResult Index()
         {
-            var services = _repository.GetAllServices();
+            var services = _professionalService.GetAllServices();
             ViewBag.Services = services;
             
             return View();

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ErenAliKocaCV.Models;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using System;
@@ -14,12 +14,12 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
     [Authorize]
     public class SettingsController : Controller
     {
-        private readonly ICVRepository _repository;
+        private readonly ISiteSettingsService _siteSettingsService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public SettingsController(ICVRepository repository, IWebHostEnvironment webHostEnvironment)
+        public SettingsController(ISiteSettingsService siteSettingsService, IWebHostEnvironment webHostEnvironment)
         {
-            _repository = repository;
+            _siteSettingsService = siteSettingsService;
             _webHostEnvironment = webHostEnvironment;
         }
 
@@ -32,7 +32,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         public IActionResult Edit()
         {
             // Site ayarlarını veritabanından alıyoruz, yoksa yeni oluşturuyoruz
-            var settings = _repository.GetSiteSettings() ?? new SiteSettings();
+            var settings = _siteSettingsService.GetSiteSettings() ?? new SiteSettings();
             return View(settings);
         }
 
@@ -71,7 +71,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                 }
                 
                 // Ayarları veritabanına kaydediyoruz
-                bool success = _repository.UpdateSiteSettings(siteSettings);
+                bool success = _siteSettingsService.UpdateSiteSettings(siteSettings);
                 
                 if (success)
                 {

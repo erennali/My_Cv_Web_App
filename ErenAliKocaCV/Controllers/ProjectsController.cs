@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using System;
 using Microsoft.Data.SqlClient;
 using ErenAliKocaCV.Data;
@@ -11,13 +11,13 @@ namespace ErenAliKocaCV.Controllers
     [RedirectToHome]
     public class ProjectsController : Controller
     {
-        private readonly ICVRepository _repository;
+        private readonly IProjectService _projectService;
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
 
-        public ProjectsController(ICVRepository repository, ApplicationDbContext context, IConfiguration configuration)
+        public ProjectsController(IProjectService projectService, ApplicationDbContext context, IConfiguration configuration)
         {
-            _repository = repository;
+            _projectService = projectService;
             _context = context;
             _configuration = configuration;
         }
@@ -26,7 +26,7 @@ namespace ErenAliKocaCV.Controllers
         {
             try
             {
-                var projects = _repository.GetAllProjects();
+                var projects = _projectService.GetAllProjects();
                 ViewBag.Projects = projects;
                 
                 return View();

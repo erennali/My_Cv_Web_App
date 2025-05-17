@@ -1,28 +1,28 @@
 using ErenAliKocaCV.Models;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
     public class ExperienceController : AdminControllerBase
     {
-        private readonly ICVRepository _repository;
+        private readonly IExperienceService _experienceService;
 
-        public ExperienceController(ICVRepository repository)
+        public ExperienceController(IExperienceService experienceService)
         {
-            _repository = repository;
+            _experienceService = experienceService;
         }
 
         // GET: Admin/Experience
         public IActionResult Index()
         {
-            return View(_repository.GetAllExperience());
+            return View(_experienceService.GetAllExperience());
         }
 
         // GET: Admin/Experience/Details/5
         public IActionResult Details(int id)
         {
-            var experience = _repository.GetExperienceById(id);
+            var experience = _experienceService.GetExperienceById(id);
             if (experience == null)
             {
                 return NotFound();
@@ -44,7 +44,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (_repository.AddExperience(experience))
+                if (_experienceService.AddExperience(experience))
                 {
                     TempData["SuccessMessage"] = "Experience added successfully!";
                     return RedirectToAction(nameof(Index));
@@ -60,7 +60,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         // GET: Admin/Experience/Edit/5
         public IActionResult Edit(int id)
         {
-            var experience = _repository.GetExperienceById(id);
+            var experience = _experienceService.GetExperienceById(id);
             if (experience == null)
             {
                 return NotFound();
@@ -81,7 +81,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                if (_repository.UpdateExperience(experience))
+                if (_experienceService.UpdateExperience(experience))
                 {
                     TempData["SuccessMessage"] = "Experience updated successfully!";
                     return RedirectToAction(nameof(Index));
@@ -97,7 +97,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         // GET: Admin/Experience/Delete/5
         public IActionResult Delete(int id)
         {
-            var experience = _repository.GetExperienceById(id);
+            var experience = _experienceService.GetExperienceById(id);
             if (experience == null)
             {
                 return NotFound();
@@ -111,7 +111,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            if (_repository.DeleteExperience(id))
+            if (_experienceService.DeleteExperience(id))
             {
                 TempData["SuccessMessage"] = "Experience deleted successfully!";
             }

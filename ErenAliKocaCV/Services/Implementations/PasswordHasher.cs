@@ -1,15 +1,10 @@
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
 using System.Security.Cryptography;
+using ErenAliKocaCV.Services.Interfaces;
 
-namespace ErenAliKocaCV.Services
+namespace ErenAliKocaCV.Services.Implementations
 {
-    public interface IPasswordHasher
-    {
-        string HashPassword(string password);
-        bool VerifyPassword(string hashedPassword, string providedPassword);
-    }
-    
     public class PasswordHasher : IPasswordHasher
     {
         private const int SaltSize = 128 / 8; // 16 bytes

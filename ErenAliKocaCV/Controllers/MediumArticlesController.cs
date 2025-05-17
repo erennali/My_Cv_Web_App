@@ -1,4 +1,4 @@
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using ErenAliKocaCV.Filters;
 
@@ -7,22 +7,22 @@ namespace ErenAliKocaCV.Controllers
     [RedirectToHome]
     public class MediumArticlesController : Controller
     {
-        private readonly ICVRepository _repository;
+        private readonly IMediumArticleService _mediumArticleService;
 
-        public MediumArticlesController(ICVRepository repository)
+        public MediumArticlesController(IMediumArticleService mediumArticleService)
         {
-            _repository = repository;
+            _mediumArticleService = mediumArticleService;
         }
 
         public IActionResult Index()
         {
-            var articles = _repository.GetAllMediumArticles();
+            var articles = _mediumArticleService.GetAllMediumArticles();
             return View(articles);
         }
 
         public IActionResult Details(int id)
         {
-            var article = _repository.GetMediumArticleById(id);
+            var article = _mediumArticleService.GetMediumArticleById(id);
             if (article == null)
             {
                 return NotFound();

@@ -1,34 +1,35 @@
 using ErenAliKocaCV.Models;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using System.Linq;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
     public class ProjectController : AdminControllerBase
     {
-        private readonly ICVRepository _repository;
+        private readonly IProjectService _projectService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProjectController(ICVRepository repository, IWebHostEnvironment webHostEnvironment)
+        public ProjectController(IProjectService projectService, IWebHostEnvironment webHostEnvironment)
         {
-            _repository = repository;
+            _projectService = projectService;
             _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Admin/Project
         public IActionResult Index()
         {
-            return View(_repository.GetAllProjects());
+            return View(_projectService.GetAllProjects());
         }
 
         // GET: Admin/Project/Details/5
         public IActionResult Details(int id)
         {
-            var project = _repository.GetProjectById(id);
+            var project = _projectService.GetProjectById(id);
             if (project == null)
             {
                 return NotFound();
@@ -83,7 +84,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                 // ProjectUrl'i boşalt (artık kullanmıyoruz)
                 project.ProjectUrl = string.Empty;
                 
-                if (_repository.AddProject(project))
+                if (_projectService.AddProject(project))
                 {
                     TempData["SuccessMessage"] = "Project added successfully!";
                     return RedirectToAction(nameof(Index));
@@ -99,7 +100,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         // GET: Admin/Project/Edit/5
         public IActionResult Edit(int id)
         {
-            var project = _repository.GetProjectById(id);
+            var project = _projectService.GetProjectById(id);
             if (project == null)
             {
                 return NotFound();
@@ -139,7 +140,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
             try
             {
                 // Mevcut projeyi al
-                var existingProject = _repository.GetProjectById(id);
+                var existingProject = _projectService.GetProjectById(id);
                 if (existingProject == null)
                 {
                     Console.WriteLine($"Proje bulunamadı - ID: {id}");
@@ -212,7 +213,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                 
                 // Projeyi güncelle
                 Console.WriteLine("UpdateProject metodu çağrılıyor...");
-                bool success = _repository.UpdateProject(project);
+                bool success = _projectService.UpdateProject(project);
                 Console.WriteLine($"UpdateProject sonucu: {success}");
                 
                 if (success)
@@ -249,7 +250,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         // GET: Admin/Project/Delete/5
         public IActionResult Delete(int id)
         {
-            var project = _repository.GetProjectById(id);
+            var project = _projectService.GetProjectById(id);
             if (project == null)
             {
                 return NotFound();
@@ -263,7 +264,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var project = _repository.GetProjectById(id);
+            var project = _projectService.GetProjectById(id);
             if (project != null)
             {
                 // Dosya silinecekse
@@ -279,7 +280,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                     }
                 }
                 
-                if (_repository.DeleteProject(id))
+                if (_projectService.DeleteProject(id))
                 {
                     TempData["SuccessMessage"] = "Project deleted successfully!";
                 }

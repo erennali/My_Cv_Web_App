@@ -1,5 +1,6 @@
 using ErenAliKocaCV.Data;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Implementations;
+using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,13 +28,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.EnableDetailedErrors();
 });
 
-// Register repository service
-builder.Services.AddScoped<ICVRepository, CVRepository>();
+// Register HTTP client for GitHub API
+builder.Services.AddHttpClient();
 
-// Register GitHub service
+// Register services with their interfaces - Dependency Injection
+builder.Services.AddScoped<IPersonalInfoService, PersonalInfoService>();
+builder.Services.AddScoped<IExperienceService, ExperienceService>();
+builder.Services.AddScoped<ISkillService, SkillService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IProfessionalService, ProfessionalService>();
+builder.Services.AddScoped<IMediumArticleService, MediumArticleService>();
+builder.Services.AddScoped<IContactService, ContactService>();
+builder.Services.AddScoped<ICVFileService, CVFileService>();
+builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGitHubService, GitHubService>();
-
-// Register password hasher service
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
 // Add authentication services with enhanced security

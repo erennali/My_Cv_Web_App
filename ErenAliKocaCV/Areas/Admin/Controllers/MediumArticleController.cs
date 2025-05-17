@@ -1,28 +1,28 @@
 using ErenAliKocaCV.Models;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
     public class MediumArticleController : AdminControllerBase
     {
-        private readonly ICVRepository _repository;
+        private readonly IMediumArticleService _mediumArticleService;
 
-        public MediumArticleController(ICVRepository repository)
+        public MediumArticleController(IMediumArticleService mediumArticleService)
         {
-            _repository = repository;
+            _mediumArticleService = mediumArticleService;
         }
 
         // GET: Admin/MediumArticle
         public IActionResult Index()
         {
-            return View(_repository.GetAllMediumArticles());
+            return View(_mediumArticleService.GetAllMediumArticles());
         }
 
         // GET: Admin/MediumArticle/Details/5
         public IActionResult Details(int id)
         {
-            var article = _repository.GetMediumArticleById(id);
+            var article = _mediumArticleService.GetMediumArticleById(id);
             if (article == null)
             {
                 return NotFound();
@@ -44,7 +44,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (_repository.AddMediumArticle(article))
+                if (_mediumArticleService.AddMediumArticle(article))
                 {
                     TempData["SuccessMessage"] = "Medium article added successfully!";
                     return RedirectToAction(nameof(Index));
@@ -60,7 +60,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         // GET: Admin/MediumArticle/Edit/5
         public IActionResult Edit(int id)
         {
-            var article = _repository.GetMediumArticleById(id);
+            var article = _mediumArticleService.GetMediumArticleById(id);
             if (article == null)
             {
                 return NotFound();
@@ -81,7 +81,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                if (_repository.UpdateMediumArticle(article))
+                if (_mediumArticleService.UpdateMediumArticle(article))
                 {
                     TempData["SuccessMessage"] = "Medium article updated successfully!";
                     return RedirectToAction(nameof(Index));
@@ -97,7 +97,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         // GET: Admin/MediumArticle/Delete/5
         public IActionResult Delete(int id)
         {
-            var article = _repository.GetMediumArticleById(id);
+            var article = _mediumArticleService.GetMediumArticleById(id);
             if (article == null)
             {
                 return NotFound();
@@ -111,7 +111,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            if (_repository.DeleteMediumArticle(id))
+            if (_mediumArticleService.DeleteMediumArticle(id))
             {
                 TempData["SuccessMessage"] = "Medium article deleted successfully!";
             }

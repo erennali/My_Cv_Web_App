@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using ErenAliKocaCV.Filters;
 using System.Threading.Tasks;
 

@@ -1,5 +1,5 @@
 using ErenAliKocaCV.Models;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,19 +10,19 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
     public class CVController : AdminControllerBase
     {
-        private readonly ICVRepository _repository;
+        private readonly ICVFileService _cvFileService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public CVController(ICVRepository repository, IWebHostEnvironment webHostEnvironment)
+        public CVController(ICVFileService cvFileService, IWebHostEnvironment webHostEnvironment)
         {
-            _repository = repository;
+            _cvFileService = cvFileService;
             _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Admin/CV
         public IActionResult Index()
         {
-            return View(_repository.GetAllCVFiles());
+            return View(_cvFileService.GetAllCVFiles());
         }
 
         // GET: Admin/CV/Upload
@@ -77,7 +77,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                     IsActive = isActive
                 };
 
-                if (_repository.AddCVFile(cvFileEntity))
+                if (_cvFileService.AddCVFile(cvFileEntity))
                 {
                     TempData["SuccessMessage"] = "CV file uploaded successfully!";
                     return RedirectToAction(nameof(Index));
@@ -102,7 +102,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult SetActive(int id)
         {
-            if (_repository.SetCVFileActive(id))
+            if (_cvFileService.SetCVFileActive(id))
             {
                 TempData["SuccessMessage"] = "CV file set as active successfully!";
             }
@@ -119,7 +119,8 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            var cvFile = _repository.GetAllCVFiles().FirstOrDefault(cf => cf.Id == id);
+            var cvFiles = _cvFileService.GetAllCVFiles().ToList();
+            var cvFile = cvFiles.FirstOrDefault(cf => cf.Id == id);
             if (cvFile != null)
             {
                 // Delete file from server
@@ -130,7 +131,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                 }
 
                 // Delete from database
-                if (_repository.DeleteCVFile(id))
+                if (_cvFileService.DeleteCVFile(id))
                 {
                     TempData["SuccessMessage"] = "CV file deleted successfully!";
                 }

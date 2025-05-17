@@ -1,27 +1,29 @@
 using ErenAliKocaCV.Models;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using ErenAliKocaCV.Data;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
     public class ServiceController : AdminControllerBase
     {
-        private readonly ICVRepository _repository;
+        private readonly IProfessionalService _professionalService;
         private readonly ApplicationDbContext _context;
 
-        public ServiceController(ICVRepository repository, ApplicationDbContext context)
+        public ServiceController(IProfessionalService professionalService, ApplicationDbContext context)
         {
-            _repository = repository;
+            _professionalService = professionalService;
             _context = context;
         }
 
         // GET: Admin/Service
         public IActionResult Index()
         {
-            return View(_repository.GetAllServices());
+            return View(_professionalService.GetAllServices());
         }
 
         // GET: Admin/Service/UpdateAllIcons
@@ -54,7 +56,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         // GET: Admin/Service/Details/5
         public IActionResult Details(int id)
         {
-            var service = _repository.GetServiceById(id);
+            var service = _professionalService.GetServiceById(id);
             if (service == null)
             {
                 return NotFound();
@@ -123,7 +125,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                 try
                 {
                     Debug.WriteLine($"Model is valid, attempting to add service");
-                    if (_repository.AddService(service))
+                    if (_professionalService.AddService(service))
                     {
                         Debug.WriteLine("Service added successfully!");
                         TempData["SuccessMessage"] = "Service added successfully!";
@@ -160,7 +162,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         // GET: Admin/Service/Edit/5
         public IActionResult Edit(int id)
         {
-            var service = _repository.GetServiceById(id);
+            var service = _professionalService.GetServiceById(id);
             if (service == null)
             {
                 return NotFound();
@@ -212,7 +214,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 Debug.WriteLine($"Attempting to update service: {service.Title}, ID: {service.Id}");
-                if (_repository.UpdateService(service))
+                if (_professionalService.UpdateService(service))
                 {
                     Debug.WriteLine("Service updated successfully!");
                     TempData["SuccessMessage"] = "Service updated successfully!";
@@ -237,7 +239,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         // GET: Admin/Service/Delete/5
         public IActionResult Delete(int id)
         {
-            var service = _repository.GetServiceById(id);
+            var service = _professionalService.GetServiceById(id);
             if (service == null)
             {
                 return NotFound();
@@ -251,7 +253,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            if (_repository.DeleteService(id))
+            if (_professionalService.DeleteService(id))
             {
                 TempData["SuccessMessage"] = "Service deleted successfully!";
             }

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using ErenAliKocaCV.Filters;
 
 namespace ErenAliKocaCV.Controllers
@@ -7,16 +7,16 @@ namespace ErenAliKocaCV.Controllers
     [RedirectToHome]
     public class SkillsController : Controller
     {
-        private readonly ICVRepository _repository;
+        private readonly ISkillService _skillService;
 
-        public SkillsController(ICVRepository repository)
+        public SkillsController(ISkillService skillService)
         {
-            _repository = repository;
+            _skillService = skillService;
         }
         
         public IActionResult Index()
         {
-            var skills = _repository.GetAllSkills();
+            var skills = _skillService.GetAllSkills();
             ViewBag.Skills = skills;
             
             return View();

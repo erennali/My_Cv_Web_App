@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ErenAliKocaCV.Models;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using ErenAliKocaCV.Data;
 using System;
 
@@ -10,32 +10,47 @@ namespace ErenAliKocaCV.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly ICVRepository _repository;
-    private readonly ApplicationDbContext _context;
+    private readonly IPersonalInfoService _personalInfoService;
+    private readonly IProfessionalService _professionalService;
+    private readonly ISkillService _skillService;
+    private readonly IProjectService _projectService;
+    private readonly IExperienceService _experienceService;
+    private readonly IMediumArticleService _mediumArticleService;
     private readonly IGitHubService _githubService;
+    private readonly ApplicationDbContext _context;
 
     public HomeController(
-        ILogger<HomeController> logger, 
-        ICVRepository repository, 
-        ApplicationDbContext context,
-        IGitHubService githubService)
+        ILogger<HomeController> logger,
+        IPersonalInfoService personalInfoService,
+        IProfessionalService professionalService,
+        ISkillService skillService,
+        IProjectService projectService,
+        IExperienceService experienceService,
+        IMediumArticleService mediumArticleService,
+        IGitHubService githubService,
+        ApplicationDbContext context)
     {
         _logger = logger;
-        _repository = repository;
-        _context = context;
+        _personalInfoService = personalInfoService;
+        _professionalService = professionalService;
+        _skillService = skillService;
+        _projectService = projectService;
+        _experienceService = experienceService;
+        _mediumArticleService = mediumArticleService;
         _githubService = githubService;
+        _context = context;
     }
 
     public async Task<IActionResult> Index()
     {
-        var personalInfo = _repository.GetPersonalInfo();
+        var personalInfo = _personalInfoService.GetPersonalInfo();
         ViewBag.PersonalInfo = personalInfo;
         
-        ViewBag.Services = _repository.GetAllServices();
-        ViewBag.Skills = _repository.GetAllSkills();
-        ViewBag.Projects = _repository.GetAllProjects();
-        ViewBag.Experiences = _repository.GetAllExperience();
-        ViewBag.MediumArticles = _repository.GetAllMediumArticles();
+        ViewBag.Services = _professionalService.GetAllServices();
+        ViewBag.Skills = _skillService.GetAllSkills();
+        ViewBag.Projects = _projectService.GetAllProjects();
+        ViewBag.Experiences = _experienceService.GetAllExperience();
+        ViewBag.MediumArticles = _mediumArticleService.GetAllMediumArticles();
         
         // GitHub kullanıcı adını alma
         string githubUsername = "erenalikoca";

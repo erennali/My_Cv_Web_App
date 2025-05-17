@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using ErenAliKocaCV.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {

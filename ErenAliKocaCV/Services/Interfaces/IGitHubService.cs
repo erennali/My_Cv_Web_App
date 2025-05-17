@@ -1,6 +1,6 @@
 using ErenAliKocaCV.Models;
 
-namespace ErenAliKocaCV.Services
+namespace ErenAliKocaCV.Services.Interfaces
 {
     public interface IGitHubService
     {

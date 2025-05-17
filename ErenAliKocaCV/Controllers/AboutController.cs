@@ -1,6 +1,6 @@
 using ErenAliKocaCV.Data;
 using Microsoft.AspNetCore.Mvc;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using System;
 using ErenAliKocaCV.Filters;
 
@@ -9,18 +9,18 @@ namespace ErenAliKocaCV.Controllers
     [RedirectToHome]
     public class AboutController : Controller
     {
-        private readonly ICVRepository _repository;
+        private readonly IPersonalInfoService _personalInfoService;
         private readonly ApplicationDbContext _context;
 
-        public AboutController(ICVRepository repository, ApplicationDbContext context)
+        public AboutController(IPersonalInfoService personalInfoService, ApplicationDbContext context)
         {
-            _repository = repository;
+            _personalInfoService = personalInfoService;
             _context = context;
         }
         
         public IActionResult Index()
         {
-            var personalInfo = _repository.GetPersonalInfo();
+            var personalInfo = _personalInfoService.GetPersonalInfo();
             ViewBag.PersonalInfo = personalInfo;
             
             try

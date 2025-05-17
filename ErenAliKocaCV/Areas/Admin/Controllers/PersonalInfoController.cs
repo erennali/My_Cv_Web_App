@@ -1,5 +1,5 @@
 using ErenAliKocaCV.Models;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,19 +11,19 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
     public class PersonalInfoController : AdminControllerBase
     {
-        private readonly ICVRepository _repository;
+        private readonly IPersonalInfoService _personalInfoService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public PersonalInfoController(ICVRepository repository, IWebHostEnvironment webHostEnvironment)
+        public PersonalInfoController(IPersonalInfoService personalInfoService, IWebHostEnvironment webHostEnvironment)
         {
-            _repository = repository;
+            _personalInfoService = personalInfoService;
             _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Admin/PersonalInfo
         public IActionResult Index()
         {
-            var personalInfo = _repository.GetPersonalInfo();
+            var personalInfo = _personalInfoService.GetPersonalInfo();
             if (personalInfo == null)
             {
                 personalInfo = new PersonalInfo
@@ -39,7 +39,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         // GET: Admin/PersonalInfo/Edit
         public IActionResult Edit()
         {
-            var personalInfo = _repository.GetPersonalInfo();
+            var personalInfo = _personalInfoService.GetPersonalInfo();
             if (personalInfo == null)
             {
                 personalInfo = new PersonalInfo
@@ -101,7 +101,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                     }
                 }
 
-                if (_repository.UpdatePersonalInfo(personalInfo))
+                if (_personalInfoService.UpdatePersonalInfo(personalInfo))
                 {
                     TempData["SuccessMessage"] = "Personal information updated successfully!";
                     return RedirectToAction(nameof(Index));

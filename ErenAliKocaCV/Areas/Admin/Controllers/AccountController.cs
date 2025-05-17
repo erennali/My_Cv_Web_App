@@ -1,6 +1,6 @@
 using ErenAliKocaCV.Data;
 using ErenAliKocaCV.Models;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +18,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuthService _authService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IMemoryCache _memoryCache;
         private readonly IConfiguration _configuration;
@@ -25,10 +26,16 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         private const int MaxLoginAttempts = 5;
         private const int LockoutMinutes = 15;
 
-        public AccountController(ApplicationDbContext context, IPasswordHasher passwordHasher, 
-            IMemoryCache memoryCache, IConfiguration configuration, IWebHostEnvironment environment)
+        public AccountController(
+            ApplicationDbContext context, 
+            IAuthService authService,
+            IPasswordHasher passwordHasher, 
+            IMemoryCache memoryCache, 
+            IConfiguration configuration, 
+            IWebHostEnvironment environment)
         {
             _context = context;
+            _authService = authService;
             _passwordHasher = passwordHasher;
             _memoryCache = memoryCache;
             _configuration = configuration;
@@ -89,13 +96,13 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
             
             if (ModelState.IsValid)
             {
-                var user = await _context.AdminUsers
-                    .FirstOrDefaultAsync(u => u.Username == model.Username);
+                // IAuthService kullanarak kimlik doğrulama yapılıyor
+                var user = _authService.GetUserByUsername(model.Username);
 
                 if (user != null)
                 {
                     // Modern güvenli hash doğrulama
-                    bool passwordValid = _passwordHasher.VerifyPassword(user.Password, model.Password);
+                    bool passwordValid = _authService.VerifyCredentials(model.Username, model.Password);
                     
                     if (passwordValid)
                     {
@@ -249,18 +256,21 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
             
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             
-            // Log the logout activity
-            LogActivity(username, "Logout", true, ipAddress, GetUserAgent(), "User logged out successfully");
+            // Çıkış aktivitesini logla
+            if (username != null)
+            {
+                LogActivity(username, "Logout", true, ipAddress, GetUserAgent(), "User logged out");
+            }
             
             return RedirectToAction("Login");
         }
-
+        
         [Authorize(Roles = "Admin")]
         public IActionResult ChangePassword()
         {
-            return View(new ChangePasswordViewModel());
+            return View();
         }
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -268,85 +278,68 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userId = User.FindFirstValue("UserId");
-                if (!int.TryParse(userId, out int id))
+                var username = User.Identity?.Name;
+                if (username == null)
                 {
                     return RedirectToAction("Login");
                 }
-
-                var user = await _context.AdminUsers.FindAsync(id);
-                if (user == null)
+                
+                // IAuthService kullanarak şifre değiştirme
+                bool result = _authService.ChangePassword(username, model.CurrentPassword, model.NewPassword);
+                
+                if (result)
                 {
-                    return NotFound();
+                    // Başarılı şifre değişikliğini logla
+                    var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+                    LogActivity(username, "ChangePassword", true, ipAddress, GetUserAgent(), "Password changed successfully");
+                    
+                    TempData["SuccessMessage"] = "Şifreniz başarıyla değiştirildi.";
+                    return RedirectToAction("Index", "Dashboard");
                 }
-
-                // Sadece modern güvenli hash kontrolü
-                bool currentPasswordValid = _passwordHasher.VerifyPassword(user.Password, model.CurrentPassword);
-                
-                if (!currentPasswordValid)
+                else
                 {
-                    ModelState.AddModelError("CurrentPassword", "Mevcut şifreniz yanlış");
-                    return View(model);
+                    // Başarısız şifre değişikliğini logla
+                    var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+                    LogActivity(username, "ChangePassword", false, ipAddress, GetUserAgent(), "Failed to change password - incorrect current password");
+                    
+                    ModelState.AddModelError("", "Mevcut şifreniz doğru değil.");
                 }
-                
-                // Set the new password with secure hashing
-                user.Password = _passwordHasher.HashPassword(model.NewPassword);
-                user.PasswordChangedDate = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
-                
-                // Log password change activity
-                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
-                LogActivity(user.Username, "Password Changed", true, ipAddress, GetUserAgent(), 
-                    "User changed their password successfully");
-                
-                TempData["SuccessMessage"] = "Şifreniz başarıyla değiştirildi.";
-                return RedirectToAction("Index", "Dashboard");
             }
             
             return View(model);
         }
-
+        
         public IActionResult AccessDenied()
         {
             return View();
         }
-
-        // Add helper methods for activity logging and user agent
+        
         private string GetUserAgent()
         {
             return HttpContext.Request.Headers["User-Agent"].ToString();
         }
-
+        
         private void LogActivity(string username, string action, bool isSuccess, string ipAddress, string userAgent, string details = null)
         {
             try
             {
-                // Check if ActivityLogs table exists in the model
-                if (_context.Model.FindEntityType(typeof(ActivityLog)) != null)
+                var log = new ActivityLog
                 {
-                    var activityLog = new ActivityLog
-                    {
-                        Username = username ?? "Anonymous",
-                        Action = action,
-                        IsSuccess = isSuccess,
-                        IpAddress = ipAddress,
-                        UserAgent = userAgent,
-                        Details = details,
-                        Timestamp = DateTime.UtcNow
-                    };
-                    
-                    _context.Set<ActivityLog>().Add(activityLog);
-                    _context.SaveChanges();
-                }
-                else
-                {
-                    // Fallback to console logging if table doesn't exist
-                    Console.WriteLine($"Activity Log: {username} | {action} | {isSuccess} | {ipAddress} | {DateTime.UtcNow} | {details}");
-                }
+                    Username = username,
+                    Action = action,
+                    IsSuccess = isSuccess,
+                    IpAddress = ipAddress,
+                    UserAgent = userAgent?.Length > 500 ? userAgent.Substring(0, 500) : userAgent,
+                    Details = details,
+                    Timestamp = DateTime.UtcNow
+                };
+                
+                _context.ActivityLogs.Add(log);
+                _context.SaveChanges();
             }
             catch (Exception ex)
             {
-                // Log to console if there's an error
+                // Log dosyasına kaydet veya konsol çıktısı al
                 Console.WriteLine($"Error logging activity: {ex.Message}");
             }
         }

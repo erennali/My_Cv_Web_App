@@ -1,6 +1,6 @@
 using ErenAliKocaCV.Data;
 using ErenAliKocaCV.Models;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -9,23 +9,23 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
     public class SkillController : AdminControllerBase
     {
-        private readonly ICVRepository _repository;
+        private readonly ISkillService _skillService;
 
-        public SkillController(ICVRepository repository)
+        public SkillController(ISkillService skillService)
         {
-            _repository = repository;
+            _skillService = skillService;
         }
 
         // GET: Admin/Skill
         public IActionResult Index()
         {
-            return View(_repository.GetAllSkills());
+            return View(_skillService.GetAllSkills());
         }
 
         // GET: Admin/Skill/Details/5
         public IActionResult Details(int id)
         {
-            var skill = _repository.GetSkillById(id);
+            var skill = _skillService.GetSkillById(id);
             if (skill == null)
             {
                 return NotFound();
@@ -47,7 +47,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (_repository.AddSkill(skill))
+                if (_skillService.AddSkill(skill))
                 {
                     TempData["SuccessMessage"] = "Skill added successfully!";
                     return RedirectToAction(nameof(Index));
@@ -63,7 +63,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         // GET: Admin/Skill/Edit/5
         public IActionResult Edit(int id)
         {
-            var skill = _repository.GetSkillById(id);
+            var skill = _skillService.GetSkillById(id);
             if (skill == null)
             {
                 return NotFound();
@@ -83,7 +83,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                if (_repository.UpdateSkill(skill))
+                if (_skillService.UpdateSkill(skill))
                 {
                     TempData["SuccessMessage"] = "Skill updated successfully!";
                     return RedirectToAction(nameof(Index));
@@ -99,7 +99,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         // GET: Admin/Skill/Delete/5
         public IActionResult Delete(int id)
         {
-            var skill = _repository.GetSkillById(id);
+            var skill = _skillService.GetSkillById(id);
             if (skill == null)
             {
                 return NotFound();
@@ -113,7 +113,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            if (_repository.DeleteSkill(id))
+            if (_skillService.DeleteSkill(id))
             {
                 TempData["SuccessMessage"] = "Skill deleted successfully!";
             }

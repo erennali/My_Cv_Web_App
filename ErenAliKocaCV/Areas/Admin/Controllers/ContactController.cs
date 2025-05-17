@@ -1,28 +1,28 @@
 using ErenAliKocaCV.Models;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
     public class ContactController : AdminControllerBase
     {
-        private readonly ICVRepository _repository;
+        private readonly IContactService _contactService;
 
-        public ContactController(ICVRepository repository)
+        public ContactController(IContactService contactService)
         {
-            _repository = repository;
+            _contactService = contactService;
         }
 
         // GET: Admin/Contact/Messages
         public IActionResult Messages()
         {
-            return View(_repository.GetAllContactMessages());
+            return View(_contactService.GetAllContactMessages());
         }
 
         // GET: Admin/Contact/Details/5
         public IActionResult Details(int id)
         {
-            var message = _repository.GetContactMessageById(id);
+            var message = _contactService.GetContactMessageById(id);
             if (message == null)
             {
                 return NotFound();
@@ -36,7 +36,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            if (_repository.DeleteContactMessage(id))
+            if (_contactService.DeleteContactMessage(id))
             {
                 TempData["SuccessMessage"] = "Message deleted successfully!";
             }

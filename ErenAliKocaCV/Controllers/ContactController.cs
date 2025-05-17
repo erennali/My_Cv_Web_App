@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ErenAliKocaCV.Models;
-using ErenAliKocaCV.Services;
+using ErenAliKocaCV.Services.Interfaces;
 using ErenAliKocaCV.Filters;
 
 namespace ErenAliKocaCV.Controllers
@@ -8,16 +8,18 @@ namespace ErenAliKocaCV.Controllers
     [RedirectToHome]
     public class ContactController : Controller
     {
-        private readonly ICVRepository _repository;
+        private readonly IContactService _contactService;
+        private readonly IPersonalInfoService _personalInfoService;
 
-        public ContactController(ICVRepository repository)
+        public ContactController(IContactService contactService, IPersonalInfoService personalInfoService)
         {
-            _repository = repository;
+            _contactService = contactService;
+            _personalInfoService = personalInfoService;
         }
         
         public IActionResult Index()
         {
-            var personalInfo = _repository.GetPersonalInfo();
+            var personalInfo = _personalInfoService.GetPersonalInfo();
             ViewBag.PersonalInfo = personalInfo;
             
             return View();
@@ -28,7 +30,7 @@ namespace ErenAliKocaCV.Controllers
         {
             if (ModelState.IsValid)
             {
-                bool success = _repository.SaveContactMessage(contactMessage);
+                bool success = _contactService.SaveContactMessage(contactMessage);
                 
                 if (success)
                 {
@@ -41,7 +43,7 @@ namespace ErenAliKocaCV.Controllers
                 }
             }
             
-            var personalInfo = _repository.GetPersonalInfo();
+            var personalInfo = _personalInfoService.GetPersonalInfo();
             ViewBag.PersonalInfo = personalInfo;
             
             return View("Index", contactMessage);
