@@ -4,9 +4,12 @@ using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+    [Authorize]
     public class SkillController : AdminControllerBase
     {
         private readonly ISkillService _skillService;

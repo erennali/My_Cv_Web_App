@@ -1,9 +1,12 @@
 using ErenAliKocaCV.Models;
 using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+    [Authorize]
     public class MediumArticleController : AdminControllerBase
     {
         private readonly IMediumArticleService _mediumArticleService;

@@ -6,9 +6,12 @@ using ErenAliKocaCV.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+    [Authorize]
     public class ServiceController : AdminControllerBase
     {
         private readonly IProfessionalService _professionalService;

@@ -1,126 +1,188 @@
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Yönetim Paneli";
 }
 
 <div class="container-fluid">
-    <div class="row">
+    <!-- Başlık ve İstatistik Özeti -->
+    <div class="row mb-4">
         <div class="col-12">
-            <div class="page-title-box d-flex align-items-center justify-content-between mb-4">
-                <h4 class="mb-0">Dashboard Overview</h4>
+            <div class="page-title-box d-flex align-items-center justify-content-between">
+                <div>
+                    <h4 class="mb-1 font-weight-bold">Yönetim Paneli</h4>
+                    <p class="text-muted mb-0">CV sitesi performans ve içerik istatistikleri</p>
+                </div>
                 <div class="page-title-right">
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="far fa-calendar-alt me-1"></i> <span id="selected-period">Last 30 Days</span>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="periodDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="far fa-calendar-alt me-1"></i> <span id="selected-period">Son 30 Gün</span>
                         </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <li><a class="dropdown-item period-option" href="javascript:void(0);" data-period="7">Last 7 Days</a></li>
-                            <li><a class="dropdown-item period-option" href="javascript:void(0);" data-period="30">Last 30 Days</a></li>
-                            <li><a class="dropdown-item period-option" href="javascript:void(0);" data-period="90">Last 90 Days</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="periodDropdown">
+                            <li><a class="dropdown-item period-option" href="javascript:void(0);" data-period="7">Son 7 Gün</a></li>
+                            <li><a class="dropdown-item period-option" href="javascript:void(0);" data-period="30">Son 30 Gün</a></li>
+                            <li><a class="dropdown-item period-option" href="javascript:void(0);" data-period="90">Son 90 Gün</a></li>
                         </ul>
                     </div>
+                    <button id="refreshDashboardBtn" class="btn btn-sm btn-light ms-2">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Welcome Card -->
+    <!-- Karşılama Kartı -->
     <div class="row">
         <div class="col-12">
-            <div class="card mb-4">
+            <div class="card mb-4 bg-gradient-primary text-white">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h5 class="fw-semibold">Welcome back, @User.Identity?.Name!</h5>
-                            <p class="text-muted mb-0">Here's what's happening with your CV website today.</p>
-                        </div>
                         <div>
-                            <button class="btn btn-primary">
-                                <i class="fas fa-sync-alt me-1"></i> Refresh Stats
-                            </button>
+                            <h5 class="fw-semibold text-white mb-1">Hoş geldiniz, @User.Identity?.Name!</h5>
+                            <p class="mb-0 opacity-75">
+                                @DateTime.Now.ToString("dd MMMM yyyy, dddd, HH:mm") 
+                                <span class="ms-2 badge bg-light text-dark">@(ViewBag.SystemInfo?.Runtime)</span>
+                            </p>
+                        </div>
+                        <div class="ms-auto">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="quickActions" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-bolt me-1"></i> Hızlı İşlemler
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="quickActions">
+                                    <li><a class="dropdown-item" href="@Url.Action("Create", "Project", new { area = "Admin" })"><i class="fas fa-plus-circle me-1"></i> Yeni Proje Ekle</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Create", "Experience", new { area = "Admin" })"><i class="fas fa-plus-circle me-1"></i> Yeni Deneyim Ekle</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Create", "Skill", new { area = "Admin" })"><i class="fas fa-plus-circle me-1"></i> Yeni Yetenek Ekle</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Messages", "Contact", new { area = "Admin" })"><i class="fas fa-envelope me-1"></i> Mesajları Görüntüle</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Statistics Cards -->
+    
+    <!-- Özet İstatistik Kartları -->
     <div class="row">
         <div class="col-xl-3 col-md-6">
             <div class="card mb-4 border-0 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <div class="avatar-sm bg-primary-subtle rounded p-2 me-3">
-                            <i class="fas fa-user fa-lg text-primary"></i>
+                        <div class="avatar-md rounded-circle bg-primary-subtle d-flex align-items-center justify-content-center me-3">
+                            <i class="fas fa-envelope fa-2x text-primary"></i>
                         </div>
                         <div class="flex-grow-1">
-                            <p class="text-muted mb-1">Personal Info</p>
-                            <h4 class="mb-0">@ViewBag.PersonalInfoCount</h4>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <span class="badge bg-soft-success text-success">
-                                <i class="fas fa-check me-1"></i>Complete
-                            </span>
+                            <h4 class="fs-22 fw-semibold mb-0">@ViewBag.UnreadMessageCount / @ViewBag.TotalMessageCount</h4>
+                            <p class="text-muted mb-0">Okunmamış / Toplam Mesaj</p>
                         </div>
                     </div>
-                    <div class="mt-3">
-                        <a class="btn btn-sm btn-link ps-0" asp-area="Admin" asp-controller="PersonalInfo" asp-action="Index">
-                            View Details <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
+                    <div class="d-flex align-items-center mt-3">
+                        <span class="badge bg-soft-primary me-2">
+                            <i class="fas fa-calendar-day me-1"></i> Bugün: @ViewBag.TodayMessages
+                        </span>
+                        <span class="badge bg-soft-primary me-2">
+                            <i class="fas fa-calendar-week me-1"></i> Bu hafta: @ViewBag.WeekMessages
+                        </span>
+                        @if (ViewBag.MonthlyMessageGrowth > 0)
+                        {
+                            <span class="badge bg-soft-success ms-auto">
+                                <i class="fas fa-arrow-up me-1"></i> %@(Math.Round(ViewBag.MonthlyMessageGrowth, 1))
+                            </span>
+                        }
+                        else if (ViewBag.MonthlyMessageGrowth < 0)
+                        {
+                            <span class="badge bg-soft-danger ms-auto">
+                                <i class="fas fa-arrow-down me-1"></i> %@(Math.Abs(Math.Round(ViewBag.MonthlyMessageGrowth, 1)))
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-soft-secondary ms-auto">
+                                <i class="fas fa-minus me-1"></i> %0
+                            </span>
+                        }
                     </div>
                 </div>
             </div>
         </div>
-        
-        
-        
+
         <div class="col-xl-3 col-md-6">
             <div class="card mb-4 border-0 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <div class="avatar-sm bg-warning-subtle rounded p-2 me-3">
-                            <i class="fas fa-briefcase fa-lg text-warning"></i>
+                        <div class="avatar-md rounded-circle bg-success-subtle d-flex align-items-center justify-content-center me-3">
+                            <i class="fas fa-project-diagram fa-2x text-success"></i>
                         </div>
                         <div class="flex-grow-1">
-                            <p class="text-muted mb-1">Experience</p>
-                            <h4 class="mb-0">@ViewBag.ExperienceCount</h4>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <span class="badge bg-soft-info text-info">
-                                <i class="fas fa-info-circle me-1"></i>Active
-                            </span>
+                            <h4 class="fs-22 fw-semibold mb-0">@ViewBag.ProjectCount</h4>
+                            <p class="text-muted mb-0">Toplam Proje</p>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <a class="btn btn-sm btn-link ps-0" asp-area="Admin" asp-controller="Experience" asp-action="Index">
-                            View Details <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted small">Son güncelleme</span>
+                            <span class="text-dark small fw-medium">
+                                @(ViewBag.LastProjectUpdate?.ToString("dd.MM.yyyy") ?? "Belirtilmemiş")
+                            </span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: @(ViewBag.ProjectCount > 0 ? "100" : "0")%;" aria-valuenow="@(ViewBag.ProjectCount > 0 ? "100" : "0")" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="col-xl-3 col-md-6">
             <div class="card mb-4 border-0 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <div class="avatar-sm bg-danger-subtle rounded p-2 me-3">
-                            <i class="fas fa-code fa-lg text-danger"></i>
+                        <div class="avatar-md rounded-circle bg-info-subtle d-flex align-items-center justify-content-center me-3">
+                            <i class="fas fa-code fa-2x text-info"></i>
                         </div>
                         <div class="flex-grow-1">
-                            <p class="text-muted mb-1">Skills</p>
-                            <h4 class="mb-0">@ViewBag.SkillCount</h4>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <span class="badge bg-soft-info text-info">
-                                <i class="fas fa-info-circle me-1"></i>Active
-                            </span>
+                            <h4 class="fs-22 fw-semibold mb-0">@ViewBag.SkillCount</h4>
+                            <p class="text-muted mb-0">Toplam Yetenek</p>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <a class="btn btn-sm btn-link ps-0" asp-area="Admin" asp-controller="Skill" asp-action="Index">
-                            View Details <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted small">Son güncelleme</span>
+                            <span class="text-dark small fw-medium">
+                                @(ViewBag.LastSkillUpdate?.ToString("dd.MM.yyyy") ?? "Belirtilmemiş")
+                            </span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: @(ViewBag.SkillCount > 0 ? "100" : "0")%;" aria-valuenow="@(ViewBag.SkillCount > 0 ? "100" : "0")" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-md rounded-circle bg-warning-subtle d-flex align-items-center justify-content-center me-3">
+                            <i class="fas fa-briefcase fa-2x text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h4 class="fs-22 fw-semibold mb-0">@ViewBag.ExperienceCount</h4>
+                            <p class="text-muted mb-0">Toplam Deneyim</p>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted small">Son güncelleme</span>
+                            <span class="text-dark small fw-medium">
+                                @(ViewBag.LastExperienceUpdate?.ToString("dd.MM.yyyy") ?? "Belirtilmemiş")
+                            </span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: @(ViewBag.ExperienceCount > 0 ? "100" : "0")%;" aria-valuenow="@(ViewBag.ExperienceCount > 0 ? "100" : "0")" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
                     </div>
                 </div>
             </div>

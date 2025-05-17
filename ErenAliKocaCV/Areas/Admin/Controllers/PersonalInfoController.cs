@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+    [Authorize]
     public class PersonalInfoController : AdminControllerBase
     {
         private readonly IPersonalInfoService _personalInfoService;

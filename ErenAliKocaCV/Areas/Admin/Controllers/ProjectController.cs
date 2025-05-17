@@ -6,9 +6,12 @@ using System;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+    [Authorize]
     public class ProjectController : AdminControllerBase
     {
         private readonly IProjectService _projectService;

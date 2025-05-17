@@ -3,6 +3,8 @@ using ErenAliKocaCV.Services.Implementations;
 using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Diagnostics;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,9 +84,18 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
+    // Genel hata sayfası için hata yakalayıcısı
     app.UseExceptionHandler("/Home/Error");
+    
+    // 404 (Sayfa bulunamadı) hatası için özel sayfa
+    app.UseStatusCodePagesWithReExecute("/Home/StatusCode", "?code={0}");
+    
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else
+{
+    app.UseDeveloperExceptionPage();
 }
 
 // Enable compression

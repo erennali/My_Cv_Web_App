@@ -1,31 +1,17 @@
-﻿@model ErrorViewModel
 @{
-    ViewData["Title"] = "Hata";
+    ViewData["Title"] = "Sayfa Bulunamadı";
+    Layout = "_Layout";
 }
 
 <div class="container error-page">
     <div class="row">
         <div class="col-md-8 mx-auto text-center">
             <div class="error-content">
-                @if (Model.StatusCode > 0)
-                {
-                    <h1 class="error-code">@Model.StatusCode</h1>
-                    <h2 class="error-title">Bir Hata Oluştu</h2>
-                }
-                else
-                {
-                    <h1 class="error-code">Hata</h1>
-                    <h2 class="error-title">İşleminiz sırasında bir hata oluştu.</h2>
-                }
-                
+                <h1 class="error-code">404</h1>
+                <h2 class="error-title">Sayfa Bulunamadı</h2>
                 <div class="error-description">
-                    <p>Lütfen daha sonra tekrar deneyin veya site yöneticisiyle iletişime geçin.</p>
-                    @if (Model.ShowRequestId)
-                    {
-                        <p>
-                            <strong>İstek ID:</strong> <code>@Model.RequestId</code>
-                        </p>
-                    }
+                    <p>Aradığınız sayfa mevcut değil veya kaldırılmış olabilir.</p>
+                    <p>URL'yi kontrol edin veya aşağıdaki bağlantıları kullanın.</p>
                 </div>
                 <div class="error-actions">
                     <a href="/" class="btn btn-primary btn-lg">
@@ -66,4 +52,4 @@
     .error-actions .btn {
         margin: 5px;
     }
-</style>
+</style> 

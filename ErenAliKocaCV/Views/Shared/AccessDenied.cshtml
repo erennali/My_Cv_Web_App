@@ -1,35 +1,24 @@
-﻿@model ErrorViewModel
 @{
-    ViewData["Title"] = "Hata";
+    ViewData["Title"] = "Erişim Reddedildi";
+    Layout = "_Layout";
 }
 
 <div class="container error-page">
     <div class="row">
         <div class="col-md-8 mx-auto text-center">
             <div class="error-content">
-                @if (Model.StatusCode > 0)
-                {
-                    <h1 class="error-code">@Model.StatusCode</h1>
-                    <h2 class="error-title">Bir Hata Oluştu</h2>
-                }
-                else
-                {
-                    <h1 class="error-code">Hata</h1>
-                    <h2 class="error-title">İşleminiz sırasında bir hata oluştu.</h2>
-                }
-                
+                <h1 class="error-code">403</h1>
+                <h2 class="error-title">Erişim Reddedildi</h2>
                 <div class="error-description">
-                    <p>Lütfen daha sonra tekrar deneyin veya site yöneticisiyle iletişime geçin.</p>
-                    @if (Model.ShowRequestId)
-                    {
-                        <p>
-                            <strong>İstek ID:</strong> <code>@Model.RequestId</code>
-                        </p>
-                    }
+                    <p>Bu sayfaya erişim yetkiniz bulunmamaktadır.</p>
+                    <p>Erişim için giriş yapmanız veya gerekli izinlere sahip olmanız gerekmektedir.</p>
                 </div>
                 <div class="error-actions">
                     <a href="/" class="btn btn-primary btn-lg">
                         <i class="fas fa-home"></i> Ana Sayfaya Dön
+                    </a>
+                    <a href="/Admin/Account/Login" class="btn btn-success btn-lg">
+                        <i class="fas fa-sign-in-alt"></i> Giriş Yap
                     </a>
                     <a href="javascript:history.back()" class="btn btn-outline-secondary btn-lg">
                         <i class="fas fa-arrow-left"></i> Geri Dön
@@ -47,7 +36,7 @@
     .error-code {
         font-size: 120px;
         font-weight: 700;
-        color: #e74c3c;
+        color: #f39c12;
         margin-bottom: 0;
     }
     .error-title {
@@ -66,4 +55,4 @@
     .error-actions .btn {
         margin: 5px;
     }
-</style>
+</style> 

@@ -1,9 +1,12 @@
 using ErenAliKocaCV.Models;
 using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+    [Authorize]
     public class ExperienceController : AdminControllerBase
     {
         private readonly IExperienceService _experienceService;

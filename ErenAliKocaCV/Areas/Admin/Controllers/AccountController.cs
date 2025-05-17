@@ -311,6 +311,11 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         
         public IActionResult AccessDenied()
         {
+            // Erişim reddedildi aktivitesini loglama
+            var username = User.Identity?.Name ?? "Anonymous";
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+            LogActivity(username, "AccessDenied", false, ipAddress, GetUserAgent(), "Yetkilendirme hatası - erişim engellendi");
+            
             return View();
         }
         
