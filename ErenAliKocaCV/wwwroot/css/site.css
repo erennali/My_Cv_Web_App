@@ -542,3 +542,58 @@ section.ftco-section {
   transform: scale(1.01);
   transition: all 0.3s ease;
 }
+
+@media (max-width: 767.98px) {
+  .navbar-toggler {
+    display: block !important;
+    z-index: 1051;
+  }
+  .navbar-collapse {
+    background: #222 !important;
+    width: 100% !important;
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+  }
+  .navbar-nav {
+    width: 100%;
+    text-align: center;
+  }
+  .navbar-nav .nav-item {
+    display: block;
+    margin: 0.5rem 0;
+  }
+  .js-fullheight,
+  .img,
+  .slider-item img,
+  .img-about img,
+  .contact-section .img img,
+  .project img,
+  .article-icon,
+  .article-image img,
+  .services-1 img,
+  .ftco-footer img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+  section, .container, .row {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  html, body {
+    overflow-x: hidden !important;
+    height: auto !important;
+  }
+  .row, [class^="col-"] {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}

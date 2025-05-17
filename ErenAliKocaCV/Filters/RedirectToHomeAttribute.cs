@@ -5,7 +5,7 @@ namespace ErenAliKocaCV.Filters
 {
     /// <summary>
     /// Direkt controller/action URL erişimlerini engelleyip ana sayfaya yönlendiren attribute
-    /// </summary>
+    /// </summary> 
     public class RedirectToHomeAttribute : ActionFilterAttribute
     {
         private readonly bool _enabled;
