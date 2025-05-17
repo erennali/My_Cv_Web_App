@@ -15,12 +15,14 @@ builder.WebHost.ConfigureKestrel(options => {
     builder.WebHost.UseUrls(urls);
 });
 
+// Add response caching service
+builder.Services.AddResponseCaching();
+
+// Add memory cache
+builder.Services.AddMemoryCache();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
-// Configure caching for better performance
-builder.Services.AddResponseCaching();
-builder.Services.AddMemoryCache();
 
 // Configure Entity Framework with SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -101,21 +103,20 @@ else
 // Enable compression
 app.UseResponseCompression();
 
-// Enable caching
+// Enable response caching middleware
 app.UseResponseCaching();
 
-// Add cache control headers
+// Configure cache profiles
 app.Use(async (context, next) =>
 {
-    context.Response.Headers["Cache-Control"] = 
-        context.Request.Path.StartsWithSegments("/css") || 
+    // Cache static files for 7 days
+    if (context.Request.Path.StartsWithSegments("/css") || 
         context.Request.Path.StartsWithSegments("/js") || 
-        context.Request.Path.StartsWithSegments("/images") || 
         context.Request.Path.StartsWithSegments("/lib") || 
-        context.Request.Path.StartsWithSegments("/clark-master") 
-            ? "public, max-age=604800" // Cache static resources for a week
-            : "no-cache, no-store, must-revalidate"; // Don't cache dynamic content
-            
+        context.Request.Path.StartsWithSegments("/images"))
+    {
+        context.Response.Headers.Append("Cache-Control", "public,max-age=604800");
+    }
     await next();
 });
 

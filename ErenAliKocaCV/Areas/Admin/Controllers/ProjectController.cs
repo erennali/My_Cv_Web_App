@@ -1,11 +1,6 @@
 using ErenAliKocaCV.Models;
 using ErenAliKocaCV.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Hosting;
-using System;
-using System.IO;
-using Microsoft.AspNetCore.Http;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers

@@ -70,6 +70,57 @@ namespace ErenAliKocaCV.Data
                     Email = "admin@example.com"
                 }
             );
+            
+            // Index for ContactMessages for faster message queries
+            modelBuilder.Entity<ContactMessage>()
+                .HasIndex(m => m.DateSent)
+                .HasDatabaseName("IX_ContactMessages_DateSent");
+            
+            modelBuilder.Entity<ContactMessage>()
+                .HasIndex(m => m.IsRead)
+                .HasDatabaseName("IX_ContactMessages_IsRead");
+            
+            // Index for ActivityLog for faster activity queries
+            if (modelBuilder.Model.FindEntityType(typeof(ActivityLog)) != null)
+            {
+                modelBuilder.Entity<ActivityLog>()
+                    .HasIndex(a => a.Timestamp)
+                    .HasDatabaseName("IX_ActivityLog_Timestamp");
+                
+                modelBuilder.Entity<ActivityLog>()
+                    .HasIndex(a => a.Action)
+                    .HasDatabaseName("IX_ActivityLog_Action");
+                
+                modelBuilder.Entity<ActivityLog>()
+                    .HasIndex(a => a.IsSuccess)
+                    .HasDatabaseName("IX_ActivityLog_IsSuccess");
+                
+                // Composite index for login success status queries
+                modelBuilder.Entity<ActivityLog>()
+                    .HasIndex(a => new { a.Action, a.IsSuccess, a.Timestamp })
+                    .HasDatabaseName("IX_ActivityLog_Action_IsSuccess_Timestamp");
+            }
+            
+            // Add indexes for Skills and Projects to optimize category queries
+            modelBuilder.Entity<Skill>()
+                .HasIndex(s => s.Category)
+                .HasDatabaseName("IX_Skills_Category");
+            
+            modelBuilder.Entity<Project>()
+                .HasIndex(p => p.Category)
+                .HasDatabaseName("IX_Projects_Category");
+            
+            // Create indexes for UpdatedAt fields for faster last update queries
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                var updatedAtProperty = entityType.FindProperty("UpdatedAt");
+                if (updatedAtProperty != null)
+                {
+                    modelBuilder.Entity(entityType.ClrType)
+                        .HasIndex(updatedAtProperty.Name)
+                        .HasDatabaseName($"IX_{entityType.GetTableName()}_{updatedAtProperty.Name}");
+                }
+            }
         }
     }
 } 
