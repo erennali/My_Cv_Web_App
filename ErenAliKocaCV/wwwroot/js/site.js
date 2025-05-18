@@ -117,11 +117,13 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             // Menü kapalıyken sayfa kaydırmayı etkinleştir
             document.body.style.overflow = 'auto';
-            
-            // Eğer önceki scroll pozisyonu kaydedildiyse, sayfayı oraya geri getir
-            if (window.menuScrollPosition !== undefined) {
-                window.scrollTo(0, window.menuScrollPosition);
-            }
+
+            // Eğer önceki scroll pozisyonu kaydedildiyse ve menü GERÇEKTEN YENİ KAPANDIysa sayfayı oraya geri getir.
+            // Bu, resize gibi olaylarda sayfanın gereksiz yere kaymasını engeller.
+            // Bu satırı ŞİMDİLİK YORUM SATIRI YAPARAK test edelim.
+            // if (window.menuScrollPosition !== undefined && !menuCollapse.classList.contains('show')) {
+            //     // window.scrollTo(0, window.menuScrollPosition);
+            // }
         }
     }
     
@@ -281,9 +283,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // İlk yüklemede sayfanın scrollable olduğundan emin ol
-    setTimeout(function() {
-        window.scrollTo(0, 0);
-    }, 100);
+    // setTimeout(function() {
+    //     window.scrollTo(0, 0);
+    // }, 100);
     
     // Initial update
     setTimeout(updatePageTitle, 100);
