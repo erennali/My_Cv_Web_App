@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
@@ -123,18 +124,34 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            var cvFiles = _cvFileService.GetAllCVFiles().ToList();
-            var cvFile = cvFiles.FirstOrDefault(cf => cf.Id == id);
+            var cvFile = _cvFileService.GetAllCVFiles().FirstOrDefault(cf => cf.Id == id);
             if (cvFile != null)
             {
-                // Delete file from server
-                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, cvFile.FilePath.TrimStart('/'));
+                // Güvenli bir şekilde dosya yolunu oluştur - path traversal güvenlik açığını önle
+                string fileName = Path.GetFileName(cvFile.FilePath.TrimStart('/'));
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    TempData["ErrorMessage"] = "Invalid file path.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                // Dosya yolunun uploads klasörü içinde olup olmadığını kontrol et
+                if (!filePath.StartsWith(uploadsFolder))
+                {
+                    TempData["ErrorMessage"] = "Invalid file path.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Dosyayı sil
                 if (System.IO.File.Exists(filePath))
                 {
                     System.IO.File.Delete(filePath);
                 }
 
-                // Delete from database
+                // Veritabanından sil
                 if (_cvFileService.DeleteCVFile(id))
                 {
                     TempData["SuccessMessage"] = "CV file deleted successfully!";
