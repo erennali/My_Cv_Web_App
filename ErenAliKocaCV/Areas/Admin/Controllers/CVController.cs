@@ -57,6 +57,16 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
 
             try
             {
+                // SECURITY: Güvenli dosya işlemleri için
+                // Sadece güvenli karakterleri kabul et
+                string originalFileName = cvFile.FileName;
+                if (string.IsNullOrEmpty(originalFileName) || 
+                    originalFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                {
+                    ModelState.AddModelError("cvFile", "File name contains invalid characters.");
+                    return View();
+                }
+
                 // Create directory if it doesn't exist
                 var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
                 if (!Directory.Exists(uploadsFolder))
@@ -64,12 +74,40 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                     Directory.CreateDirectory(uploadsFolder);
                 }
 
-                // Create unique filename
-                var uniqueFileName = $"{Guid.NewGuid()}_{cvFile.FileName}";
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                // Create unique filename - sadece safe dosya adı ve GUID kullan
+                string safeFileName = Path.GetFileNameWithoutExtension(originalFileName);
+                string extension = Path.GetExtension(originalFileName);
+                
+                // SECURITY: Uzantıyı kontrol et (.pdf olmalı)
+                if (!extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError("cvFile", "Only .pdf file extension allowed.");
+                    return View();
+                }
+                
+                // Regex ile dosya adını filtrele (sadece güvenli karakterler)
+                if (!Regex.IsMatch(safeFileName, @"^[a-zA-Z0-9_\-\.]+$"))
+                {
+                    safeFileName = "cv_document"; // Güvenli bir default ad kullan
+                }
+                
+                var uniqueFileName = $"{Guid.NewGuid()}_{safeFileName}{extension}";
+                
+                // SECURITY: Tam dosya yolunu güvenli bir şekilde oluştur
+                var safeFilePath = Path.Combine(uploadsFolder, uniqueFileName);
+                
+                // SECURITY: Normalize edilmiş yolun güvenli olup olmadığını kontrol et
+                var normalizedPath = Path.GetFullPath(safeFilePath);
+                var normalizedUploadsFolder = Path.GetFullPath(uploadsFolder);
+                
+                if (!normalizedPath.StartsWith(normalizedUploadsFolder))
+                {
+                    ModelState.AddModelError("", "Security violation detected in file path.");
+                    return View();
+                }
 
                 // Save file to server
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                using (var fileStream = new FileStream(normalizedPath, FileMode.Create))
                 {
                     await cvFile.CopyToAsync(fileStream);
                 }
@@ -77,7 +115,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                 // Save file information to database
                 var cvFileEntity = new CVFile
                 {
-                    FileName = cvFile.FileName,
+                    FileName = originalFileName,
                     FilePath = $"/uploads/{uniqueFileName}",
                     UploadDate = DateTime.Now,
                     IsActive = isActive
@@ -91,7 +129,7 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                 else
                 {
                     // If database save fails, delete the file
-                    System.IO.File.Delete(filePath);
+                    System.IO.File.Delete(normalizedPath);
                     ModelState.AddModelError("", "Error saving CV file to database.");
                 }
             }
