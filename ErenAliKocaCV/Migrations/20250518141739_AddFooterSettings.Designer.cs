@@ -4,6 +4,7 @@ using ErenAliKocaCV.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ErenAliKocaCV.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250518141739_AddFooterSettings")]
+    partial class AddFooterSettings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,7 +122,7 @@ namespace ErenAliKocaCV.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2025, 5, 18, 14, 30, 49, 763, DateTimeKind.Utc).AddTicks(6960),
+                            CreatedDate = new DateTime(2025, 5, 18, 14, 17, 38, 745, DateTimeKind.Utc).AddTicks(5540),
                             Email = "admin@example.com",
                             FailedLoginAttempts = 0,
                             IsLocked = false,
@@ -263,6 +266,185 @@ namespace ErenAliKocaCV.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FeaturedRepositories");
+                });
+
+            modelBuilder.Entity("ErenAliKocaCV.Models.FooterLink", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IconClass")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Order")
+                        .HasDatabaseName("IX_FooterLinks_Order");
+
+                    b.HasIndex("UpdatedAt")
+                        .HasDatabaseName("IX_FooterLinks_UpdatedAt");
+
+                    b.ToTable("FooterLinks");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 5, 18, 17, 17, 38, 745, DateTimeKind.Local).AddTicks(5650),
+                            IconClass = "icon-long-arrow-right",
+                            Order = 1,
+                            Text = "Home",
+                            UpdatedAt = new DateTime(2025, 5, 18, 17, 17, 38, 745, DateTimeKind.Local).AddTicks(5650),
+                            Url = "#home-section"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 5, 18, 17, 17, 38, 745, DateTimeKind.Local).AddTicks(5650),
+                            IconClass = "icon-long-arrow-right",
+                            Order = 2,
+                            Text = "About",
+                            UpdatedAt = new DateTime(2025, 5, 18, 17, 17, 38, 745, DateTimeKind.Local).AddTicks(5650),
+                            Url = "#about"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 5, 18, 17, 17, 38, 745, DateTimeKind.Local).AddTicks(5660),
+                            IconClass = "icon-long-arrow-right",
+                            Order = 3,
+                            Text = "GitHub",
+                            UpdatedAt = new DateTime(2025, 5, 18, 17, 17, 38, 745, DateTimeKind.Local).AddTicks(5660),
+                            Url = "#github-section"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2025, 5, 18, 17, 17, 38, 745, DateTimeKind.Local).AddTicks(5660),
+                            IconClass = "icon-long-arrow-right",
+                            Order = 4,
+                            Text = "Projects",
+                            UpdatedAt = new DateTime(2025, 5, 18, 17, 17, 38, 745, DateTimeKind.Local).AddTicks(5660),
+                            Url = "#projects"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2025, 5, 18, 17, 17, 38, 745, DateTimeKind.Local).AddTicks(5660),
+                            IconClass = "icon-long-arrow-right",
+                            Order = 5,
+                            Text = "Contact",
+                            UpdatedAt = new DateTime(2025, 5, 18, 17, 17, 38, 745, DateTimeKind.Local).AddTicks(5660),
+                            Url = "#contact"
+                        });
+                });
+
+            modelBuilder.Entity("ErenAliKocaCV.Models.FooterSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AboutText")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("AboutTitle")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ContactTitle")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("CopyrightText")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("GitHubUrl")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("LinkedInUrl")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("LinksTitle")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("MediumUrl")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UpdatedAt")
+                        .HasDatabaseName("IX_FooterSettings_UpdatedAt");
+
+                    b.ToTable("FooterSettings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AboutText = "Passionate software developer with expertise in creating efficient, scalable, and user-friendly applications across various platforms and technologies.",
+                            AboutTitle = "About Me",
+                            ContactTitle = "Have a Question?",
+                            CopyrightText = "All Rights Reserved | Designed with ❤",
+                            CreatedAt = new DateTime(2025, 5, 18, 17, 17, 38, 745, DateTimeKind.Local).AddTicks(5560),
+                            Email = "eren_ali_koca@hotmail.com",
+                            GitHubUrl = "https://github.com/erennali",
+                            LinkedInUrl = "https://www.linkedin.com/in/erenalikoca/",
+                            LinksTitle = "Site Links",
+                            MediumUrl = "https://medium.com/@erenali",
+                            UpdatedAt = new DateTime(2025, 5, 18, 17, 17, 38, 745, DateTimeKind.Local).AddTicks(5620)
+                        });
                 });
 
             modelBuilder.Entity("ErenAliKocaCV.Models.MediumArticle", b =>

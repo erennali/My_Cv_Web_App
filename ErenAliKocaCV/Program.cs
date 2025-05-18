@@ -60,8 +60,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         
         // Additional security configurations
         options.Cookie.HttpOnly = true; // Prevents client-side JavaScript from accessing the cookie
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Only send cookie over HTTPS
-        options.Cookie.SameSite = SameSiteMode.Strict; // Prevents the cookie from being sent in cross-site requests
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; // Allow cookies on HTTP in development
+        options.Cookie.SameSite = SameSiteMode.Lax; // Better compatibility with most browsers
     });
 
 // Add compression services
