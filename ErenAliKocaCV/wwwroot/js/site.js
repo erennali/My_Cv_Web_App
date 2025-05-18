@@ -20,6 +20,40 @@ document.addEventListener('DOMContentLoaded', function() {
     // iOS Safari'de kaydırmayı sağlamak için
     window.scrollTo(0, 1);
     
+    // Overlay'ı temizlemek için yardımcı fonksiyon
+    function removeMenuOverlay() {
+        const overlay = document.getElementById('menu-overlay');
+        if (overlay) {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                if (overlay && overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                }
+            }, 300);
+        }
+    }
+    
+    // Menüyü kapatmak için yardımcı fonksiyon
+    function closeMenu() {
+        if (menuCollapse && menuCollapse.classList.contains('show')) {
+            menuCollapse.classList.remove('show');
+            if (menuToggle) {
+                menuToggle.classList.remove('active');
+            }
+            
+            // Menü kapandığında sayfa kaydırmayı etkinleştir
+            document.body.style.overflow = 'auto';
+            
+            // Overlay'ı temizle
+            removeMenuOverlay();
+            
+            // Sayfa kaydırmayı hafif bir gecikme ile etkinleştir
+            setTimeout(function() {
+                document.body.style.overflow = 'auto';
+            }, 300);
+        }
+    }
+    
     // Menü butonuna dokunmayı geliştirmek için
     if (menuToggle) {
         // Dokunma kapsama alanını artırmak için ek div ekle
@@ -43,6 +77,52 @@ document.addEventListener('DOMContentLoaded', function() {
         // Navbar-toggler'ı görünür yapmak için CSS ekleme
         menuToggle.style.pointerEvents = 'auto';
         menuToggle.style.cursor = 'pointer';
+    }
+    
+    // Mobil cihazlarda menü açıldığında kaydırılabilirliği optimize etme
+    function optimizeMenuScroll() {
+        if (menuCollapse && menuCollapse.classList.contains('show')) {
+            // Menü açıkken ekranın kaydırılmasını engelleme
+            document.body.style.overflow = 'hidden';
+            
+            // Menünün kaydırılabilir olması için
+            menuCollapse.style.overflowY = 'auto';
+            menuCollapse.style.maxHeight = '85vh';
+            menuCollapse.style.display = 'block';
+            
+            // Tüm menü öğelerinin görünür olmasını sağla
+            const navItems = menuCollapse.querySelectorAll('.nav-item');
+            navItems.forEach((item, index) => {
+                item.style.display = 'block';
+                item.style.margin = '15px 0';
+                item.style.opacity = '1';
+                
+                // Son öğeye fazladan alt boşluk ekle
+                if (index === navItems.length - 1) {
+                    item.style.marginBottom = '30px';
+                }
+            });
+            
+            // Menu içeriğini ortala ve tam genişlik ver
+            const navLinks = menuCollapse.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.style.textAlign = 'center';
+                link.style.padding = '12px 15px';
+                link.style.margin = '0 auto';
+                link.style.display = 'inline-block';
+            });
+            
+            // Sayfa pozisyonunu hatırla (menü kapatıldığında dönmek için)
+            window.menuScrollPosition = window.scrollY;
+        } else {
+            // Menü kapalıyken sayfa kaydırmayı etkinleştir
+            document.body.style.overflow = 'auto';
+            
+            // Eğer önceki scroll pozisyonu kaydedildiyse, sayfayı oraya geri getir
+            if (window.menuScrollPosition !== undefined) {
+                window.scrollTo(0, window.menuScrollPosition);
+            }
+        }
     }
     
     // Debounce function to limit the rate at which updatePageTitle function executes
@@ -111,31 +191,80 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Menüyü açıp kapatma fonksiyonu
+    // Menüyü açıp kapatma fonksiyonu - güçlendirilmiş versiyon
     if (menuToggle) {
         menuToggle.addEventListener('click', function(e) {
             console.log('Menu toggle clicked'); // Debug için
             e.preventDefault();
             e.stopPropagation();
+            
+            // Toggle menu state
             menuToggle.classList.toggle('active');
+            
             if (menuCollapse) {
+                // Menü durumunu değiştir
                 menuCollapse.classList.toggle('show');
+                
+                // Menü görünürlüğünü optimize et
+                optimizeMenuScroll();
+                
+                // Menü açıkken sayfa arka planını karartan overlay ekle
+                if (menuCollapse.classList.contains('show')) {
+                    // Overlay ekle
+                    let overlay = document.getElementById('menu-overlay');
+                    if (!overlay) {
+                        overlay = document.createElement('div');
+                        overlay.id = 'menu-overlay';
+                        overlay.style.position = 'fixed';
+                        overlay.style.top = '0';
+                        overlay.style.left = '0';
+                        overlay.style.width = '100%';
+                        overlay.style.height = '100%';
+                        overlay.style.backgroundColor = 'rgba(0,0,0,0.7)';
+                        overlay.style.zIndex = '1040';
+                        overlay.style.opacity = '0';
+                        overlay.style.transition = 'opacity 0.3s ease';
+                        document.body.appendChild(overlay);
+                        
+                        // Overlay'a tıklanınca menüyü kapat
+                        overlay.addEventListener('click', function() {
+                            closeMenu();
+                        });
+                    }
+                    
+                    // Overlay'ı göster
+                    setTimeout(() => {
+                        overlay.style.opacity = '1';
+                    }, 10);
+                    
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    // Overlay'ı kaldır
+                    removeMenuOverlay();
+                    document.body.style.overflow = 'auto';
+                }
             }
         }, { capture: true });
     }
     
-    // Menü linklerine tıklandığında menüyü kapat
+    // Menü linklerine tıklandığında menüyü kapat ve overlay'ı temizle
     const menuLinks = document.querySelectorAll('.navbar-nav .nav-link');
     menuLinks.forEach(link => {
         link.addEventListener('click', function() {
-            if (menuCollapse && menuCollapse.classList.contains('show')) {
-                menuCollapse.classList.remove('show');
-                if (menuToggle) {
-                    menuToggle.classList.remove('active');
-                }
-            }
+            closeMenu();
         });
     });
+    
+    // Menüyü elle yeniden hesapla - Observer ile
+    const resizeObserver = new ResizeObserver(debounce(() => {
+        if (menuCollapse && menuCollapse.classList.contains('show')) {
+            optimizeMenuScroll();
+        }
+    }, 100));
+    
+    if (menuCollapse) {
+        resizeObserver.observe(menuCollapse);
+    }
     
     // Listen for scroll events with debounce to improve performance
     window.addEventListener('scroll', debounce(updatePageTitle, 200));
@@ -175,30 +304,28 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
-                // Safari için smooth scroll olmadığı için düz scrollIntoView kullan
-                const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                
-                if (isSafari || isMobile) {
-                    // Safari ve mobil cihazlarda smooth scroll bazen çalışmıyor
-                    const yOffset = -70; // header yüksekliği kadar offset
-                    const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                    window.scrollTo({top: y, behavior: 'auto'});
-                } else {
-                    // Diğer tarayıcılarda smooth scroll
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-                
                 // Menüyü kapat
-                if (menuCollapse && menuCollapse.classList.contains('show')) {
-                    menuCollapse.classList.remove('show');
-                    if (menuToggle) {
-                        menuToggle.classList.remove('active');
+                closeMenu();
+                
+                // Kısa bir gecikme ile scroll işlemini yap
+                setTimeout(function() {
+                    // Safari için smooth scroll olmadığı için düz scrollIntoView kullan
+                    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                    
+                    if (isSafari || isMobile) {
+                        // Safari ve mobil cihazlarda smooth scroll bazen çalışmıyor
+                        const yOffset = -70; // header yüksekliği kadar offset
+                        const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                        window.scrollTo({top: y, behavior: 'auto'});
+                    } else {
+                        // Diğer tarayıcılarda smooth scroll
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
                     }
-                }
+                }, 100);
             }
         });
     });
@@ -217,11 +344,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (Math.abs(diff) < 10) {
             e.preventDefault();
         }
+        
+        // Menü açıksa ve touchmove olayı navbar dışındaysa, menüyü kapat
+        if (menuCollapse && menuCollapse.classList.contains('show') && 
+            !e.target.closest('.navbar-collapse') && 
+            !e.target.closest('.navbar-toggler')) {
+            closeMenu();
+        }
     }, { passive: false });
     
     // Dokunma olayları için fazladan tıklama desteği
     document.addEventListener('touchend', function(e) {
-        if (menuToggle && e.target === menuToggle || menuToggle.contains(e.target)) {
+        if (menuToggle && (e.target === menuToggle || menuToggle.contains(e.target))) {
             console.log('Touchend on menuToggle'); // Debug için
             e.preventDefault();
             e.stopPropagation();
@@ -235,4 +369,25 @@ document.addEventListener('DOMContentLoaded', function() {
             menuToggle.dispatchEvent(clickEvent);
         }
     }, { passive: false });
+    
+    // Sayfa yükleme tamamlandığında, herhangi bir overlay kalmışsa temizle
+    window.addEventListener('load', function() {
+        removeMenuOverlay();
+        document.body.style.overflow = 'auto';
+    });
+    
+    // Sayfa yüklendiğinde ve yeniden boyutlandırıldığında menü optimizasyonu
+    window.addEventListener('load', optimizeMenuScroll);
+    window.addEventListener('resize', debounce(optimizeMenuScroll, 100));
+    
+    // Overlay'ı kaldırmak için olay dinleyicisi ekle
+    document.addEventListener('click', function(e) {
+        // Menü ve buton dışında herhangi bir yere tıklanırsa
+        if (menuCollapse && 
+            menuCollapse.classList.contains('show') && 
+            !e.target.closest('.navbar-collapse') && 
+            !e.target.closest('.navbar-toggler')) {
+            closeMenu();
+        }
+    });
 });
