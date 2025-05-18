@@ -44,36 +44,50 @@
 
    // Burger Menu
 	var burgerMenu = function() {
-
-		$('body').on('click', '.js-fh5co-nav-toggle', function(event){
-
+		$('body').on('click', '.navbar-toggler', function(event){
 			event.preventDefault();
-
-			if ( $('#ftco-nav').is(':visible') ) {
-				$(this).removeClass('active');
-			} else {
-				$(this).addClass('active');	
-			}
-
 			
+			// Bootstrap collapse'in saf JS metodu ile çalışmasını sağla
+			var target = $(this).data('target');
+			$(target).toggleClass('show');
+			$(this).toggleClass('active');
 			
+			// iOS ve dokunmatik cihazlarda scroll'u düzelt
+			$('html, body').css({
+				'overflow-y': 'visible',
+				'height': 'auto'
+			});
 		});
-
 	};
 	burgerMenu();
 
 
 	var onePageClick = function() {
 		$(document).on('click', '#ftco-nav a[href^="#"]', function (event) {
-	    event.preventDefault();
+			event.preventDefault();
 
-	    var href = $.attr(this, 'href');
-
-	    $('html, body').animate({
-	        scrollTop: $($.attr(this, 'href')).offset().top - 70
-	    }, 500, function() {
-	    	// window.location.hash = href;
-	    });
+			var href = $.attr(this, 'href');
+			
+			// Menü collapse'ini kapat
+			$('#ftco-nav').removeClass('show');
+			$('.navbar-toggler').removeClass('active');
+			
+			// Safari ve mobil tarayıcıları tespit et
+			var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+			var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+			
+			if(isSafari || isMobile) {
+				// Safari ve mobilde smooth scroll çalışmadığı için
+				var targetOffset = $(href).offset().top - 70;
+				$('html, body').animate({
+					scrollTop: targetOffset
+				}, 10);
+			} else {
+				// Diğer tarayıcılarda smooth scroll kullanalım
+				$('html, body').animate({
+					scrollTop: $(href).offset().top - 70
+				}, 500);
+			}
 		});
 	};
 
@@ -135,36 +149,37 @@
 		$(window).scroll(function(){
 			var $w = $(this),
 					st = $w.scrollTop(),
-					navbar = $('.ftco_navbar'),
-					sd = $('.js-scroll-wrap');
-
+					navbar = $('.ftco_navbar');
+			
+			// Sadece navbar görünümünü değiştir, overflow veya height etkileme
 			if (st > 150) {
-				if ( !navbar.hasClass('scrolled') ) {
-					navbar.addClass('scrolled');	
+				if (!navbar.hasClass('scrolled')) {
+					navbar.addClass('scrolled');
 				}
 			} 
 			if (st < 150) {
-				if ( navbar.hasClass('scrolled') ) {
+				if (navbar.hasClass('scrolled')) {
 					navbar.removeClass('scrolled sleep');
 				}
 			} 
-			if ( st > 350 ) {
-				if ( !navbar.hasClass('awake') ) {
-					navbar.addClass('awake');	
-				}
-				
-				if(sd.length > 0) {
-					sd.addClass('sleep');
+			if (st > 350) {
+				if (!navbar.hasClass('awake')) {
+					navbar.addClass('awake');
 				}
 			}
-			if ( st < 350 ) {
-				if ( navbar.hasClass('awake') ) {
+			if (st < 350) {
+				if (navbar.hasClass('awake')) {
 					navbar.removeClass('awake');
 					navbar.addClass('sleep');
 				}
-				if(sd.length > 0) {
-					sd.removeClass('sleep');
-				}
+			}
+			
+			// iOS ve dokunmatik cihazlar için scroll'u düzelt
+			if(st > 10) {
+				$('html, body').css({
+					'overflow-y': 'visible',
+					'height': 'auto'
+				});
 			}
 		});
 	};

@@ -7,6 +7,44 @@ document.addEventListener('DOMContentLoaded', function() {
     // Base title for the website
     const baseTitle = 'Eren Ali Koca | Software Developer';
     
+    // Menü butonu ve collapse elementlerini alıyoruz
+    const menuToggle = document.querySelector('.navbar-toggler');
+    const menuCollapse = document.getElementById('ftco-nav');
+    
+    // iOS ve dokunmatik cihazlarda scroll'u düzeltmek için zorunlu ayarlamalar
+    document.documentElement.style.height = 'auto';
+    document.body.style.height = 'auto';
+    document.documentElement.style.overflowY = 'visible';
+    document.body.style.overflowY = 'visible';
+    
+    // iOS Safari'de kaydırmayı sağlamak için
+    window.scrollTo(0, 1);
+    
+    // Menü butonuna dokunmayı geliştirmek için
+    if (menuToggle) {
+        // Dokunma kapsama alanını artırmak için ek div ekle
+        const touchArea = document.createElement('div');
+        touchArea.style.position = 'fixed';
+        touchArea.style.top = '0';
+        touchArea.style.right = '0';
+        touchArea.style.width = '60px';
+        touchArea.style.height = '60px';
+        touchArea.style.zIndex = '1999';
+        touchArea.style.background = 'transparent';
+        document.body.appendChild(touchArea);
+        
+        // Geniş dokunma alanı için event listener
+        touchArea.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            menuToggle.click();
+        });
+        
+        // Navbar-toggler'ı görünür yapmak için CSS ekleme
+        menuToggle.style.pointerEvents = 'auto';
+        menuToggle.style.cursor = 'pointer';
+    }
+    
     // Debounce function to limit the rate at which updatePageTitle function executes
     function debounce(func, wait) {
         let timeout;
@@ -73,8 +111,50 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Menüyü açıp kapatma fonksiyonu
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function(e) {
+            console.log('Menu toggle clicked'); // Debug için
+            e.preventDefault();
+            e.stopPropagation();
+            menuToggle.classList.toggle('active');
+            if (menuCollapse) {
+                menuCollapse.classList.toggle('show');
+            }
+        }, { capture: true });
+    }
+    
+    // Menü linklerine tıklandığında menüyü kapat
+    const menuLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    menuLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (menuCollapse && menuCollapse.classList.contains('show')) {
+                menuCollapse.classList.remove('show');
+                if (menuToggle) {
+                    menuToggle.classList.remove('active');
+                }
+            }
+        });
+    });
+    
     // Listen for scroll events with debounce to improve performance
     window.addEventListener('scroll', debounce(updatePageTitle, 200));
+    
+    // Scroll event'lerini daha yumuşak hale getirme
+    let ticking = false;
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            window.requestAnimationFrame(function() {
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+    
+    // İlk yüklemede sayfanın scrollable olduğundan emin ol
+    setTimeout(function() {
+        window.scrollTo(0, 0);
+    }, 100);
     
     // Initial update
     setTimeout(updatePageTitle, 100);
@@ -95,11 +175,64 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                // Safari için smooth scroll olmadığı için düz scrollIntoView kullan
+                const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                
+                if (isSafari || isMobile) {
+                    // Safari ve mobil cihazlarda smooth scroll bazen çalışmıyor
+                    const yOffset = -70; // header yüksekliği kadar offset
+                    const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                    window.scrollTo({top: y, behavior: 'auto'});
+                } else {
+                    // Diğer tarayıcılarda smooth scroll
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+                
+                // Menüyü kapat
+                if (menuCollapse && menuCollapse.classList.contains('show')) {
+                    menuCollapse.classList.remove('show');
+                    if (menuToggle) {
+                        menuToggle.classList.remove('active');
+                    }
+                }
             }
         });
     });
+    
+    // Touch olaylarını düzeltme (mobilin başa dönme sorunu)
+    let touchStartY = 0;
+    document.addEventListener('touchstart', function(e) {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', function(e) {
+        const touchY = e.touches[0].clientY;
+        const diff = touchStartY - touchY;
+        
+        // Çok küçük dokunuşların sayfayı başa sarmasını engelle
+        if (Math.abs(diff) < 10) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    // Dokunma olayları için fazladan tıklama desteği
+    document.addEventListener('touchend', function(e) {
+        if (menuToggle && e.target === menuToggle || menuToggle.contains(e.target)) {
+            console.log('Touchend on menuToggle'); // Debug için
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Yapay tıklama olayı oluştur
+            const clickEvent = new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                view: window
+            });
+            menuToggle.dispatchEvent(clickEvent);
+        }
+    }, { passive: false });
 });

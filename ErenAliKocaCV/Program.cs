@@ -81,6 +81,12 @@ builder.Services.AddResponseCompression(options =>
     };
 });
 
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(5096); // HTTP portu
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -135,5 +141,7 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
 
 app.Run();
