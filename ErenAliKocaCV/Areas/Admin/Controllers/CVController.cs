@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace ErenAliKocaCV.Areas.Admin.Controllers
 {
@@ -124,34 +125,59 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
+            // İlk olarak veritabanından dosyayı getir
             var cvFile = _cvFileService.GetAllCVFiles().FirstOrDefault(cf => cf.Id == id);
-            if (cvFile != null)
+            if (cvFile == null)
             {
-                // Güvenli bir şekilde dosya yolunu oluştur - path traversal güvenlik açığını önle
-                string fileName = Path.GetFileName(cvFile.FilePath.TrimStart('/'));
-                if (string.IsNullOrEmpty(fileName))
+                TempData["ErrorMessage"] = "CV file not found.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                // SECURITY: Path traversal saldırılarına karşı koruma
+                // 1. Sadece `/uploads/` dizini içindeki dosyaları silmeye izin ver
+                if (!cvFile.FilePath.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
                 {
-                    TempData["ErrorMessage"] = "Invalid file path.";
+                    TempData["ErrorMessage"] = "Invalid file path location.";
                     return RedirectToAction(nameof(Index));
                 }
 
+                // 2. Dosya adını çıkart, yolları temizle (path traversal önleme)
+                string sanitizedPath = cvFile.FilePath.TrimStart('/');
+                string fileName = Path.GetFileName(sanitizedPath.Substring("uploads/".Length));
+
+                // 3. Dosya adının geçerli olduğunu kontrol et
+                if (string.IsNullOrEmpty(fileName) || fileName.Contains("..") || 
+                    !Regex.IsMatch(fileName, @"^[a-zA-Z0-9_\-\.]+$"))
+                {
+                    TempData["ErrorMessage"] = "Invalid filename detected.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // 4. Güvenli bir şekilde tam dosya yolunu oluştur
                 var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
-                var filePath = Path.Combine(uploadsFolder, fileName);
+                var safePath = Path.Combine(uploadsFolder, fileName);
 
-                // Dosya yolunun uploads klasörü içinde olup olmadığını kontrol et
-                if (!filePath.StartsWith(uploadsFolder))
+                // 5. Normalize edilmiş dosya yolunun uploads klasörü içinde kaldığından emin ol
+                var normalizedSafePath = Path.GetFullPath(safePath);
+                var normalizedUploadsFolder = Path.GetFullPath(uploadsFolder);
+                
+                if (!normalizedSafePath.StartsWith(normalizedUploadsFolder))
                 {
-                    TempData["ErrorMessage"] = "Invalid file path.";
+                    // SECURITY: Path traversal tespit edildi - engelle
+                    TempData["ErrorMessage"] = "Security violation detected.";
+                    // Burada güvenlik ihlalini loglayabilirsiniz
                     return RedirectToAction(nameof(Index));
                 }
 
-                // Dosyayı sil
-                if (System.IO.File.Exists(filePath))
+                // 6. Dosyayı sil (güvenli yol kullanarak)
+                if (System.IO.File.Exists(normalizedSafePath))
                 {
-                    System.IO.File.Delete(filePath);
+                    System.IO.File.Delete(normalizedSafePath);
                 }
 
-                // Veritabanından sil
+                // 7. Veritabanından kaydı sil
                 if (_cvFileService.DeleteCVFile(id))
                 {
                     TempData["SuccessMessage"] = "CV file deleted successfully!";
@@ -161,9 +187,10 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                     TempData["ErrorMessage"] = "Error deleting CV file from database.";
                 }
             }
-            else
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "CV file not found.";
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+                // Hataları loglayabilirsiniz
             }
 
             return RedirectToAction(nameof(Index));
