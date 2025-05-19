@@ -62,9 +62,20 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
             return key ?? string.Empty;
         }
 
+        // Admin login blok kontrolü
+        private bool IsAdminLoginBlocked()
+        {
+            var block = _context.AdminLoginBlocks.FirstOrDefault();
+            return block != null && block.IsBlocked;
+        }
+
         [HttpGet]
         public IActionResult Login()
         {
+            if (IsAdminLoginBlocked())
+            {
+                return RedirectToAction("Index", "Home", new { area = "" });
+            }
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
@@ -76,16 +87,18 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
+            if (IsAdminLoginBlocked())
+            {
+                return RedirectToAction("Index", "Home", new { area = "" });
+            }
             // Brute force koruması - IP adresi kontrolü
             var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
             var cacheKey = $"LoginAttempt_{ipAddress}";
-            
             // Giriş denemesi sayısını kontrol et
             if (!_memoryCache.TryGetValue(cacheKey, out int loginAttempts))
             {
                 loginAttempts = 0;
             }
-            
             // Kilitleme kontrolü
             var lockoutCacheKey = $"LoginLockout_{ipAddress}";
             if (_memoryCache.TryGetValue(lockoutCacheKey, out bool _))
@@ -93,22 +106,18 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                 ModelState.AddModelError("", $"Çok fazla başarısız giriş denemesi. Hesabınız {LockoutMinutes} dakika kilitlendi.");
                 return View(model);
             }
-            
             if (ModelState.IsValid)
             {
                 // IAuthService kullanarak kimlik doğrulama yapılıyor
                 var user = _authService.GetUserByUsername(model.Username);
-
                 if (user != null)
                 {
                     // Modern güvenli hash doğrulama
                     bool passwordValid = _authService.VerifyCredentials(model.Username, model.Password);
-                    
                     if (passwordValid)
                     {
                         // Başarılı giriş, giriş denemesi sayısını sıfırla
                         _memoryCache.Remove(cacheKey);
-                        
                         var claims = new[]
                         {
                             new Claim(ClaimTypes.Name, user.Username),
@@ -116,57 +125,55 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
                             new Claim(ClaimTypes.Role, "Admin"),
                             new Claim("UserId", user.Id.ToString())
                         };
-
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         var principal = new ClaimsPrincipal(identity);
-
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
                             new AuthenticationProperties
                             {
                                 IsPersistent = model.RememberMe,
                                 ExpiresUtc = DateTime.UtcNow.AddHours(3) // Oturum süresini 3 saate ayarla
                             });
-
                         // Login başarılı olduğunda aktivite logla
                         LogActivity(user.Username, "Login", true, ipAddress, GetUserAgent(), "Successful login");
-
                         // Update user's last login date
                         user.LastLoginDate = DateTime.UtcNow;
                         await _context.SaveChangesAsync();
-
                         return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
                     }
                 }
-
                 // Başarısız giriş, giriş denemesi sayısını artır
                 loginAttempts++;
                 var cacheOptions = new MemoryCacheEntryOptions()
                     .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
                 _memoryCache.Set(cacheKey, loginAttempts, cacheOptions);
-                
-                // Max deneme sayısına ulaşıldıysa kilitle
+                // Max deneme sayısına ulaşıldıysa blokla
                 if (loginAttempts >= MaxLoginAttempts)
                 {
-                    var lockoutCacheOptions = new MemoryCacheEntryOptions()
-                        .SetAbsoluteExpiration(TimeSpan.FromMinutes(LockoutMinutes));
-                    _memoryCache.Set(lockoutCacheKey, true, lockoutCacheOptions);
-                    
+                    // SQL'de blokla
+                    var block = _context.AdminLoginBlocks.FirstOrDefault();
+                    if (block != null)
+                    {
+                        block.IsBlocked = true;
+                        _context.SaveChanges();
+                    }
+                    else
+                    {
+                        _context.AdminLoginBlocks.Add(new Models.AdminLoginBlock { IsBlocked = true });
+                        _context.SaveChanges();
+                    }
                     // Başarısız girişi logla
                     LogActivity(model.Username, "Account Locked", false, ipAddress, GetUserAgent(), 
-                        $"Account locked after {loginAttempts} failed attempts");
-                    
-                    ModelState.AddModelError("", $"Çok fazla başarısız giriş denemesi. Hesabınız {LockoutMinutes} dakika kilitlendi.");
+                        $"Account locked after {loginAttempts} failed attempts (SQL blok)");
+                    return RedirectToAction("Index", "Home", new { area = "" });
                 }
                 else
                 {
                     // Başarısız girişi logla
                     LogActivity(model.Username, "Failed Login", false, ipAddress, GetUserAgent(), 
                         $"Failed login attempt {loginAttempts}");
-                    
                     ModelState.AddModelError("", "Invalid login attempt. Please check your username and password.");
                 }
             }
-
             return View(model);
         }
 

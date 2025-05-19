@@ -22,6 +22,7 @@ namespace ErenAliKocaCV.Data
         public DbSet<SiteSettings> SiteSettings { get; set; }
         public DbSet<ActivityLog> ActivityLogs { get; set; }
         public DbSet<FeaturedRepository> FeaturedRepositories { get; set; }
+        public DbSet<AdminLoginBlock> AdminLoginBlocks { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
