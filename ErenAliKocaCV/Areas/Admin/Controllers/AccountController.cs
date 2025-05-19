@@ -180,16 +180,20 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            // Register aktif mi kontrolü
+            var settings = _context.SiteSettings.FirstOrDefault();
+            if (settings != null && !settings.IsRegisterActive)
+            {
+                return RedirectToAction("Index", "Home", new { area = "" });
+            }
             // If already authenticated, redirect to dashboard
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
             }
-            
             // Check if there are any admin users
             var adminExists = _context.AdminUsers.Any();
             ViewBag.FirstAdmin = !adminExists;
-            
             return View();
         }
 
@@ -197,10 +201,15 @@ namespace ErenAliKocaCV.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
+            // Register aktif mi kontrolü
+            var settings = _context.SiteSettings.FirstOrDefault();
+            if (settings != null && !settings.IsRegisterActive)
+            {
+                return RedirectToAction("Index", "Home", new { area = "" });
+            }
             // Check if there are any admin users
             var adminExists = _context.AdminUsers.Any();
             ViewBag.FirstAdmin = !adminExists;
-
             if (ModelState.IsValid)
             {
                 // Validate registration key (skip for first admin)

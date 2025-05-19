@@ -1,0 +1,33 @@
+@model ErenAliKocaCV.Models.SiteSettings
+@{
+    ViewData["Title"] = "Kayıt Ayarları";
+}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Admin Kayıt Sayfası Ayarları</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Kayıt Sayfası Durumu:</strong>
+                        @if (Model.IsRegisterActive)
+                        {
+                            <span class="badge bg-success">Aktif</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Kapalı</span>
+                        }
+                    </p>
+                    <form asp-action="ToggleRegister" method="post">
+                        <button type="submit" class="btn @(Model.IsRegisterActive ? "btn-danger" : "btn-success")">
+                            @(Model.IsRegisterActive ? "Kapat (Deaktif Et)" : "Aç (Aktif Et)")
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -10,6 +10,9 @@ namespace ErenAliKocaCV.Models
         [StringLength(255)]
         public string? ContactImage { get; set; }
         
+        // Register sayfası aktif mi?
+        public bool IsRegisterActive { get; set; } = true;
+        
         // Add other site-wide settings here as needed
     }
 } 
